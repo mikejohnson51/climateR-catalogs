@@ -102,7 +102,7 @@ polaris_describe = function(data){
 
   ids = gsub(".vrt", "", basename(data$URL))
 
-  out = lapply(ids[1], parse_polaris_description) %>%
+  out = lapply(ids, parse_polaris_description) %>%
     dplyr::bind_rows()
 
   cbind(data, out)

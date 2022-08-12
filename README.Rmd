@@ -1,0 +1,63 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# WIP: climateR-catalogs
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+The goal of climateR-catalogs is to build data catalogs usable with terra, climateR, gdalio, opendap.catalog, ect.
+
+The catalog(s) will be built using `targets` in this repo, and deployed as JSON artifacts at "https://mikejohnson51.github.io/climateR-catalogs/catalog.json"
+
+```{r}
+targets::tar_visnetwork()
+```
+
+Here is a minimal example with the base information added:
+
+```{r cars}
+pacman::p_load(jsonlite, dplyr, opendap.catalog, AOI, terra)
+
+url = "https://mikejohnson51.github.io/climateR-catalogs/catalog.json"
+
+cat = fromJSON(url, simplifyDataFrame = TRUE) %>% 
+  filter(description == "NLCD Land_Cover L48 2019")
+
+t(cat)
+```
+
+```{r}
+(output   = dap(catalog = cat,  AOI = aoi_get("Fort Collins")))
+
+plot(output)
+
+```
+
+This is still a little clunky but you can pass multirow "catalog" data.frames staight to 
+dap! For example say you want soil sand content, land cover and elevation for the city of Fort Collins:
+
+
+```{r}
+cat = fromJSON("docs/catalog.json", simplifyDataFrame = TRUE) %>% 
+  filter(description == c("NLCD Land_Cover L48 2019") |
+         product %in% c("mean sand 0-5cm", "30m CONUS DEM"))
+
+
+output  = lapply(1:nrow(cat), function(x){   dap(catalog = cat[x,],  
+                                         AOI = aoi_get("Fort Collins")) })
+
+for(i in 1:3){
+  plot(output[[i]], main = cat$product[i])  
+}   
+```
