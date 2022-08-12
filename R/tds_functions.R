@@ -18,3 +18,12 @@ get_bcca <- function(id = "bcca"){
   opendap.catalog::dap_meta() %>%
   mutate(tiled = "T")
 }
+
+get_bcsd_vic <- function(id = 'bcsd_vic'){
+  opendap.catalog::read_dap_file("https://cida.usgs.gov/thredds/dodsC/BCSD_mon_VIC", id = "bcsd_vic") %>%
+    tidyr::separate(varname, into = c("model", "scenario", "ensemble", "variable"), sep = "_", extra = "merge") %>%
+    opendap.catalog::dap_meta() %>%
+    mutate(tiled = "")
+}
+
+

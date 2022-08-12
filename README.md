@@ -18,9 +18,8 @@ these.
 
 ## Targets
 
-``` r
-targets::tar_visnetwork()
-```
+See interactive version
+[here](https://mikejohnson51.github.io/climateR-catalogs/)
 
 ![](README_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
 
@@ -52,6 +51,21 @@ t(cat)
 #> ncols       "161190"                                                                                             
 #> nrows       "104424"                                                                                             
 #> proj        "+proj=aea +lat_0=23 +lon_0=-96 +lat_1=29.5 +lat_2=45.5 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs"
+#> id          NA                                                                                                   
+#> varname     NA                                                                                                   
+#> variable    NA                                                                                                   
+#> model       NA                                                                                                   
+#> ensemble    NA                                                                                                   
+#> scenario    NA                                                                                                   
+#> X_name      NA                                                                                                   
+#> Y_name      NA                                                                                                   
+#> T_name      NA                                                                                                   
+#> long_name   NA                                                                                                   
+#> duration    NA                                                                                                   
+#> interval    NA                                                                                                   
+#> nT          NA                                                                                                   
+#> toptobottom NA                                                                                                   
+#> tiled       NA
 ```
 
 ``` r

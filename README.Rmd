@@ -9,6 +9,11 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+
+library(dplyr); library(targets)
+tar_visnetwork() %>% 
+  visNetwork::visSave("docs/index.html")
+
 ```
 
 # WIP: climateR-catalogs
@@ -22,8 +27,10 @@ The catalog(s) will be built using `targets` in this repo, and deployed as JSON 
 
 ## Targets
 
-```{r}
-targets::tar_visnetwork()
+See interactive version [here](https://mikejohnson51.github.io/climateR-catalogs/)
+
+```{r, echo = FALSE}
+tar_visnetwork()
 ```
 
 ### Examples

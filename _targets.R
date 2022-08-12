@@ -26,15 +26,16 @@ list(
 
   tar_target(loca, get_loca()),
   tar_target(bcca, get_bcca()),
+  tar_target(bcsd_vic, get_bcsd_vic()),
 
   tar_target(cat, create_catalog(list(elevation,
                                       soils,
                                       lc,
                                       loca,
-                                      bcca))),
+                                      bcca,
+                                      bcsd_vic))),
 
   tar_target(output, export_catalog(cat, "docs/catalog.json"), format = "file")
-
 )
 
 
