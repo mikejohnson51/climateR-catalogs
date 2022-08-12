@@ -21,6 +21,9 @@ these.
 See interactive version
 [here](https://mikejohnson51.github.io/climateR-catalogs/)
 
+    #> Warning message:
+    #> The closing backticks on line 127 ("````") in README.Rmd do not match the opening backticks "```" on line 115. You are recommended to fix either the opening or closing delimiter of the code chunk to use exactly the same numbers of backticks and same level of indentation (or blockquote).
+
 ![](README_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
 
 ### Today:
@@ -67,9 +70,11 @@ t(cat)
 #> ncols       "161190"                                                                                             
 #> nrows       "104424"                                                                                             
 #> proj        "+proj=aea +lat_0=23 +lon_0=-96 +lat_1=29.5 +lat_2=45.5 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs"
-#> id          NA                                                                                                   
 #> varname     NA                                                                                                   
 #> variable    NA                                                                                                   
+#> depth       NA                                                                                                   
+#> measure     NA                                                                                                   
+#> id          NA                                                                                                   
 #> model       NA                                                                                                   
 #> ensemble    NA                                                                                                   
 #> scenario    NA                                                                                                   
@@ -189,3 +194,23 @@ plot(data[[1]])
 ```
 
 ![](README_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+
+### Global
+
+``` r
+AOI = aoi_get(country  = "New Zealand")
+
+cat = fromJSON("docs/catalog.json", simplifyDataFrame = TRUE) %>% 
+  filter(source == "ISRIC Soil Grids",
+         variable == 'silt') %>%
+  slice(1)
+
+data = dap(URL  = cat$URL, 
+           AOI = aoi_get(country  = "New Zealand"))
+
+plot(data[[1]])
+```
+
+![](README_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+
+}
