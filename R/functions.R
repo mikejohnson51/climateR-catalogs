@@ -10,7 +10,8 @@ elevation_data = function(start){
       '/vsicurl/https://opentopography.s3.sdsc.edu/raster/NASADEM/NASADEM_be.vrt'
     ),
     units = rep("meters", 5)
-  )
+  ) %>%
+      mutate(description = product)
 
  return(df)
 }
