@@ -10,7 +10,7 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 
-library(dplyr); library(targets)
+library(dplyr); library(targets); library(jsonlite)
 tar_visnetwork() %>% 
   visNetwork::visSave("docs/index.html")
 
@@ -32,6 +32,22 @@ See interactive version [here](https://mikejohnson51.github.io/climateR-catalogs
 ```{r, echo = FALSE}
 tar_visnetwork()
 ```
+
+### Today:
+
+The catalog looks like this on `r Sys.Date()`:
+
+```{r}
+cat =  fromJSON("docs/catalog.json", simplifyDataFrame = TRUE)
+
+# Unique datasets
+nrow(cat)
+
+# Unique sources
+length(unique(cat$source))  + length(unique(cat$id))  
+
+```
+
 
 ### Examples
 

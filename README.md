@@ -23,6 +23,22 @@ See interactive version
 
 ![](README_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
 
+### Today:
+
+The catalog looks like this on 2022-08-12:
+
+``` r
+cat =  fromJSON("docs/catalog.json", simplifyDataFrame = TRUE)
+
+# Unique datasets
+nrow(cat)
+#> [1] 3151
+
+# Unique sources
+length(unique(cat$source))  + length(unique(cat$id))  
+#> [1] 16
+```
+
 ### Examples
 
 Here is a minimal example with the base information added:
@@ -85,7 +101,7 @@ t(cat)
 plot(output)
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
 
 This is still a little clunky but you can pass multi-row “catalog”
 data.frames straight to dap! For example say you want soil sand content,
@@ -106,7 +122,7 @@ for(i in 1:3){
 }  
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
 ### Hitting OpenDap resources!
 
@@ -134,9 +150,11 @@ t(cat)
 #> ncols       "462"                                                           
 #> nrows       "222"                                                           
 #> proj        "+proj=longlat +a=6378137 +f=0.00335281066474748 +pm=0 +no_defs"
-#> id          "bcca"                                                          
 #> varname     "BCCA_0-125deg_tasmin_day_MPI-ESM-LR_historical_r1i1p1"         
 #> variable    "tasmin"                                                        
+#> depth       NA                                                              
+#> measure     NA                                                              
+#> id          "bcca"                                                          
 #> model       "MPI-ESM-LR"                                                    
 #> ensemble    "r1i1p1"                                                        
 #> scenario    "historical"                                                    
@@ -170,4 +188,4 @@ data = dap(URL  = cat$URL,
 plot(data[[1]])
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->

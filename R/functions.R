@@ -137,13 +137,51 @@ nlcd_urls = function(base = "https://storage.googleapis.com/feddata-r/nlcd/"){
     select(-exists)
 }
 
-create_catalog = function(x){
-  dplyr::bind_rows(x)
-}
-
 
 export_catalog = function(x, path){
-  jsonlite::write_json(x, path, pretty = TRUE)
+
+  jsonlite::write_json(dplyr::bind_rows(x),
+                       path,
+                       pretty = TRUE)
   path
 }
+
+
+isric_urls = function(base = 'https://files.isric.org'){
+  ids = glue('{base}/soilgrids/latest/data/') |>
+    read_html() |>
+    html_nodes("a") |>
+    html_attr("href")
+
+  ids = grep("data", ids, value = TRUE)
+  ids = grep("/$", ids, value = TRUE)
+  ids = grep("/$", ids, value = TRUE)
+
+  outs = list()
+
+  for(i in 1:length(ids)){
+
+    tmp = paste0(base, substring(ids[i],1, nchar(ids[i])-1)) |>
+      read_html() |>
+      html_nodes("a") |>
+      html_attr("href")
+
+    tmp = grep(".vrt$", tmp, value = TRUE)
+
+    outs[[i]] = glue('/vsicurl/{base}{tmp}')
+  }
+
+  data.frame(
+    URL = unlist(outs),
+    source = "ISRIC Soil Grids") %>%
+    mutate(varname = gsub(".vrt", "", basename(URL))) %>%
+    tidyr::separate(varname,
+                    c("variable", "depth", "measure"),
+                    sep = "_",
+                    extra = "merge",
+                    remove = FALSE) %>%
+    mutate(description = paste(measure, variable, depth))
+
+}
+
 

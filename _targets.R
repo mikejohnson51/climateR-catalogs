@@ -1,6 +1,9 @@
 library(targets)
+library(tarchetypes)
+
 source("R/functions.R")
 source("R/tds_functions.R")
+
 tar_option_set(packages = c("terra", "sf", "rvest", "glue", "dplyr"))
 
 list(
@@ -9,12 +12,14 @@ list(
   tar_target(elevation, vrt_meta(elevation_vrts)),
 
   # Soils
-  tar_target(soils_vrts, polaris_urls('http://hydrology.cee.duke.edu/POLARIS/PROPERTIES/v1.0/vrt/')),
-  tar_target(soils, vrt_meta(soils_vrts, all = FALSE)),
+  tar_target(polaris_vrts, polaris_urls('http://hydrology.cee.duke.edu/POLARIS/PROPERTIES/v1.0/vrt/')),
+  tar_target(polaris, vrt_meta(polaris_vrts, all = FALSE)),
+  tar_target(isric_vrts, isric_urls()),
+  tar_target(isric, vrt_meta(isric_vrts, all = FALSE)),
 
   ## Land cover
-  tar_target(lc_vrts, nlcd_urls("https://storage.googleapis.com/feddata-r/nlcd/")),
-  tar_target(lc, vrt_meta(lc_vrts)),
+  tar_target(nlcd_vrts, nlcd_urls("https://storage.googleapis.com/feddata-r/nlcd/")),
+  tar_target(nlcd, vrt_meta(nlcd_vrts)),
 
   tar_target(loca, get_loca()),
   tar_target(bcca, get_bcca()),
@@ -25,19 +30,22 @@ list(
   tar_target(ssebopeta, get_ssebopeta()),
   tar_target(prism_monthly, get_prism_monthly()),
 
-
-  tar_target(cat, create_catalog(list(elevation,
-                                      soils,
-                                      lc,
+  tar_target(cat, export_catalog(list(elevation,
+                                      polaris,
+                                      isric,
+                                      nlcd,
                                       loca,
                                       bcca,
                                       bcsd_vic,
                                       bcsd, dcp,
                                       maurer,
                                       ssebopeta,
-                                      prism_monthly))),
+                                      prism_monthly),
+                                 "docs/catalog.json"),
+             format = "file"),
 
-  tar_target(output, export_catalog(cat, "docs/catalog.json"), format = "file")
+  tar_render(readme, "README.Rmd")
+
 )
 
 
