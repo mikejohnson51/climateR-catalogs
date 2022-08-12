@@ -12,13 +12,13 @@ list(
   tar_target(elevation, vrt_meta(elevation_vrts)),
 
   # Soils
-  tar_target(polaris_vrts, polaris_urls('http://hydrology.cee.duke.edu/POLARIS/PROPERTIES/v1.0/vrt/')),
+  tar_target(polaris_vrts, polaris_urls()),
   tar_target(polaris, vrt_meta(polaris_vrts, all = FALSE)),
   tar_target(isric_vrts, isric_urls()),
   tar_target(isric, vrt_meta(isric_vrts, all = FALSE)),
 
   ## Land cover
-  tar_target(nlcd_vrts, nlcd_urls("https://storage.googleapis.com/feddata-r/nlcd/")),
+  tar_target(nlcd_vrts, nlcd_urls()),
   tar_target(nlcd, vrt_meta(nlcd_vrts)),
 
   tar_target(loca, get_loca()),

@@ -49,7 +49,7 @@ vrt_meta = function(data, all = TRUE){
   data
 }
 
-polaris_urls = function(base){
+polaris_urls = function(base = 'http://hydrology.cee.duke.edu/POLARIS/PROPERTIES/v1.0/vrt/'){
 
   ids = base |>
     read_html() |>

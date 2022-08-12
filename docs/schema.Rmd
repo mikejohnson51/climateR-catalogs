@@ -1,7 +1,7 @@
 ---
 title: "Data Catalog Schema"
 author: "Mike Johnson"
-date: "2022-08-12"
+date: "`r Sys.Date()`"
 output: html_document
 ---
 
@@ -38,8 +38,8 @@ Data that is dealt with is limited to 2 or 3D information presented on a rectili
 | Spatial Data | **Y_name** | The name of the `Y` dimension/variable | | | |
 | Spatial Data | **X_res** | The resolution of the data in the `X` direction `(abs(X1-Xn) / ncol)` | | | |
 | Spatial Data | **Y_res** | The resolution of the data in the `Y` direction `(abs(Y1-Yn) / nrow)`| | | |
-| Spatial Data | **ncol** | The number of values in the X direction | | | |
-| Spatial Data | **nrow** | The number of grid cells  in the Y direction | | | |
+| Spatial Data | **ncol** | The number of values in the X direction `(abs(X1-Xn) / X_res)` | | | |
+| Spatial Data | **nrow** | The number of grid cells  in the Y direction `(abs(Y1-Yn) / Y_res)`| | | |
 | Spatial Data | **crs** | The coordinate reference system expressed as PROJ4 string| | | |
 | Spatial Data | **toptobottom** | Specific to OpenDap data describing the arrangement of the unfolded vector | | | |
 
