@@ -1,15 +1,7 @@
-
 library(targets)
 source("R/functions.R")
 source("R/tds_functions.R")
 tar_option_set(packages = c("terra", "sf", "rvest", "glue", "dplyr"))
-# list(
-#   #tar_target(elevation_vrts, elevation_data),
-#   tar_target(file, "elevation.csv", format = "file"),
-#   tar_target(elevation_vrts, get_data(file)),
-#   tar_target(elevation, vrts_meta(elevation_vrts))
-# )
-
 
 list(
   # Elevation
@@ -27,13 +19,15 @@ list(
   tar_target(loca, get_loca()),
   tar_target(bcca, get_bcca()),
   tar_target(bcsd_vic, get_bcsd_vic()),
+  tar_target(bcsd, get_bcsd()),
 
   tar_target(cat, create_catalog(list(elevation,
                                       soils,
                                       lc,
                                       loca,
                                       bcca,
-                                      bcsd_vic))),
+                                      bcsd_vic,
+                                      bcsd))),
 
   tar_target(output, export_catalog(cat, "docs/catalog.json"), format = "file")
 )
