@@ -16,13 +16,17 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of climateR-catalogs is to build data catalogs usable with terra, climateR, gdalio, opendap.catalog, ect.
+The goal of `climateR-catalogs` is to build data catalogs usable with `terra`, `climateR`, `gdalio`, `opendap.catalog`, `geoknife`, `stars` ect.
 
-The catalog(s) will be built using `targets` in this repo, and deployed as JSON artifacts at "https://mikejohnson51.github.io/climateR-catalogs/catalog.json"
+The catalog(s) will be built using `targets` in this repo, and deployed as JSON artifacts at "https://mikejohnson51.github.io/climateR-catalogs/catalog.json". Hopefully a more authorative home at USGS or NOAA can be found to host these.
+
+## Targets
 
 ```{r}
 targets::tar_visnetwork()
 ```
+
+### Examples
 
 Here is a minimal example with the base information added:
 
@@ -44,9 +48,8 @@ plot(output)
 
 ```
 
-This is still a little clunky but you can pass multirow "catalog" data.frames staight to 
+This is still a little clunky but you can pass multi-row "catalog" data.frames straight to 
 dap! For example say you want soil sand content, land cover and elevation for the city of Fort Collins:
-
 
 ```{r}
 cat = fromJSON("docs/catalog.json", simplifyDataFrame = TRUE) %>% 
@@ -57,7 +60,29 @@ cat = fromJSON("docs/catalog.json", simplifyDataFrame = TRUE) %>%
 output  = lapply(1:nrow(cat), function(x){   dap(catalog = cat[x,],  
                                          AOI = aoi_get("Fort Collins")) })
 
+par(mfrow = c(2,2))
 for(i in 1:3){
   plot(output[[i]], main = cat$product[i])  
-}   
+}  
+```
+
+### Hitting OpenDap resources!
+
+```{r}
+cat = fromJSON("docs/catalog.json", simplifyDataFrame = TRUE) %>% 
+  filter(id == 'bcca', 
+         variable  ==	'tasmin',	
+         model == 'MPI-ESM-LR', 
+         ensemble == 'r1i1p1',
+         scenario == "historical") 
+
+t(cat)
+
+data = dap(URL  = cat$URL, 
+           AOI = aoi_get(state = "FL"), 
+           varname = cat$varname,
+           startDate = "2000-10-01",
+           endDate   = "2000-10-04")
+
+plot(data[[1]])
 ```

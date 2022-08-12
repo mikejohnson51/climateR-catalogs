@@ -6,18 +6,25 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of climateR-catalogs is to build data catalogs usable with
-terra, climateR, gdalio, opendap.catalog, ect.
+The goal of `climateR-catalogs` is to build data catalogs usable with
+`terra`, `climateR`, `gdalio`, `opendap.catalog`, `geoknife`, `stars`
+ect.
 
 The catalog(s) will be built using `targets` in this repo, and deployed
 as JSON artifacts at
-“<https://mikejohnson51.github.io/climateR-catalogs/catalog.json>”
+“<https://mikejohnson51.github.io/climateR-catalogs/catalog.json>”.
+Hopefully a more authorative home at USGS or NOAA can be found to host
+these.
+
+## Targets
 
 ``` r
 targets::tar_visnetwork()
 ```
 
 ![](README_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
+
+### Examples
 
 Here is a minimal example with the base information added:
 
@@ -66,8 +73,8 @@ plot(output)
 
 ![](README_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
 
-This is still a little clunky but you can pass multirow “catalog”
-data.frames staight to dap! For example say you want soil sand content,
+This is still a little clunky but you can pass multi-row “catalog”
+data.frames straight to dap! For example say you want soil sand content,
 land cover and elevation for the city of Fort Collins:
 
 ``` r
@@ -79,9 +86,74 @@ cat = fromJSON("docs/catalog.json", simplifyDataFrame = TRUE) %>%
 output  = lapply(1:nrow(cat), function(x){   dap(catalog = cat[x,],  
                                          AOI = aoi_get("Fort Collins")) })
 
+par(mfrow = c(2,2))
 for(i in 1:3){
   plot(output[[i]], main = cat$product[i])  
-}   
+}  
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-2.png)<!-- -->![](README_files/figure-gfm/unnamed-chunk-4-3.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+
+### Hitting OpenDap resources!
+
+``` r
+cat = fromJSON("docs/catalog.json", simplifyDataFrame = TRUE) %>% 
+  filter(id == 'bcca', 
+         variable  ==   'tasmin',   
+         model == 'MPI-ESM-LR', 
+         ensemble == 'r1i1p1',
+         scenario == "historical") 
+
+t(cat)
+#>             [,1]                                                            
+#> source      NA                                                              
+#> product     NA                                                              
+#> URL         "https://cida.usgs.gov/thredds/dodsC/cmip5_bcca/historical"     
+#> units       "C"                                                             
+#> description NA                                                              
+#> X1          "-124.6875"                                                     
+#> Xn          "-67.0625"                                                      
+#> Y1          "25.1875"                                                       
+#> Yn          "52.8125"                                                       
+#> resX        "0.125"                                                         
+#> resY        "0.125"                                                         
+#> ncols       "462"                                                           
+#> nrows       "222"                                                           
+#> proj        "+proj=longlat +a=6378137 +f=0.00335281066474748 +pm=0 +no_defs"
+#> id          "bcca"                                                          
+#> varname     "BCCA_0-125deg_tasmin_day_MPI-ESM-LR_historical_r1i1p1"         
+#> variable    "tasmin"                                                        
+#> model       "MPI-ESM-LR"                                                    
+#> ensemble    "r1i1p1"                                                        
+#> scenario    "historical"                                                    
+#> X_name      "longitude"                                                     
+#> Y_name      "latitude"                                                      
+#> T_name      "time"                                                          
+#> long_name   "Daily Minimum Near-Surface Air Temperature"                    
+#> duration    "1950-01-01 12:00:00/2005-12-31 12:00:00"                       
+#> interval    "1 days"                                                        
+#> nT          "20454"                                                         
+#> toptobottom "TRUE"                                                          
+#> tiled       "T"
+
+data = dap(URL  = cat$URL, 
+           AOI = aoi_get(state = "FL"), 
+           varname = cat$varname,
+           startDate = "2000-10-01",
+           endDate   = "2000-10-04")
+#> source:   https://cida.usgs.gov/thredds/dodsC/cmip5_bcca/historical 
+#> varname(s):
+#>    > BCCA_0-125deg_tasmin_day_MPI-ESM-LR_historical_r1i1p1 [C] (Daily Minimum Near-Surface Air Temperature)
+#> ==================================================
+#> diminsions:  63, 48, 4 (names: longitude,latitude,time)
+#> resolution:  0.125, 0.125, 1 days
+#> extent:      -87.75, -79.88, 25.12, 31.12 (xmin, xmax, ymin, ymax)
+#> crs:         +proj=longlat +a=6378137 +f=0.00335281066474748 +p...
+#> time:        2000-09-30 12:00:00 to 2000-10-03 12:00:00
+#> ==================================================
+#> values: 12,096 (vars*X*Y*T)
+
+plot(data[[1]])
+```
+
+![](README_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
