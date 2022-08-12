@@ -47,3 +47,44 @@ get_bcsd = function(id = "bcsd"){
   mutate(tiled = "")
 }
 
+get_dcp = function(id = "dcp"){
+  opendap.catalog::read_dap_file(URL = "https://cida.usgs.gov/thredds/dodsC/dcp/conus_t",
+                id = id) %>%
+  tidyr::separate(varname,
+                  into = c("model", "scenario", "variable", NA, NA),
+                  sep = "-",
+                  extra = "merge",
+                  remove = FALSE) %>%
+  opendap.catalog::dap_meta() %>%
+  mutate(tiled = "")
+}
+
+get_maurer = function(id = "maurer"){
+  opendap.catalog::read_dap_file(URL = "https://cida.usgs.gov/thredds/dodsC/maurer/maurer_brekke_w_meta.ncml",
+                                 id = id) %>%
+  tidyr::separate(varname,
+                  into = c("scenario", "model", "ensemble", "variable"),
+                  sep = "_",
+                  extra = "merge",
+                  remove = FALSE) %>%
+  opendap.catalog::dap_meta() %>%
+  mutate(tiled = "")
+}
+
+####  ssebopeta ####
+get_ssebopeta = function(id = "ssebopeta"){
+  opendap.catalog::read_dap_file(URL = "https://cida.usgs.gov/thredds/dodsC/ssebopeta/monthly",
+                id = id) %>%
+  opendap.catalog::dap_meta() %>%
+  mutate(tiled = "")
+}
+
+####  PRISM Monthly ####
+get_prism_monthly = function(id = "prism_monthly"){
+  opendap.catalog::read_dap_file(URL = "https://cida.usgs.gov/thredds/dodsC/prism_v2",
+                id = id) %>%
+  mutate(variable = varname) %>%
+  opendap.catalog::dap_meta() %>%
+  mutate(tiled = "")
+}
+

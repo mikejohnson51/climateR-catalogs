@@ -20,6 +20,11 @@ list(
   tar_target(bcca, get_bcca()),
   tar_target(bcsd_vic, get_bcsd_vic()),
   tar_target(bcsd, get_bcsd()),
+  tar_target(dcp, get_dcp()),
+  tar_target(maurer, get_maurer()),
+  tar_target(ssebopeta, get_ssebopeta()),
+  tar_target(prism_monthly, get_prism_monthly()),
+
 
   tar_target(cat, create_catalog(list(elevation,
                                       soils,
@@ -27,7 +32,10 @@ list(
                                       loca,
                                       bcca,
                                       bcsd_vic,
-                                      bcsd))),
+                                      bcsd, dcp,
+                                      maurer,
+                                      ssebopeta,
+                                      prism_monthly))),
 
   tar_target(output, export_catalog(cat, "docs/catalog.json"), format = "file")
 )
