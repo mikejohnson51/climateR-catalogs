@@ -113,8 +113,6 @@ plot(data[[1]])
 ### Global
 
 ```{r}
-AOI = aoi_get(country  = "New Zealand")
-
 cat = fromJSON("docs/catalog.json", simplifyDataFrame = TRUE) %>% 
   filter(source == "ISRIC Soil Grids",
          variable == 'silt') %>%
@@ -124,6 +122,4 @@ data = dap(URL  = cat$URL,
            AOI = aoi_get(country  = "New Zealand"))
 
 plot(data[[1]])
-````
-
-}
+```

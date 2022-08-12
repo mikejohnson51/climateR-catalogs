@@ -21,9 +21,6 @@ these.
 See interactive version
 [here](https://mikejohnson51.github.io/climateR-catalogs/)
 
-    #> Warning message:
-    #> The closing backticks on line 127 ("````") in README.Rmd do not match the opening backticks "```" on line 115. You are recommended to fix either the opening or closing delimiter of the code chunk to use exactly the same numbers of backticks and same level of indentation (or blockquote).
-
 ![](README_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
 
 ### Today:
@@ -198,8 +195,6 @@ plot(data[[1]])
 ### Global
 
 ``` r
-AOI = aoi_get(country  = "New Zealand")
-
 cat = fromJSON("docs/catalog.json", simplifyDataFrame = TRUE) %>% 
   filter(source == "ISRIC Soil Grids",
          variable == 'silt') %>%
@@ -212,5 +207,3 @@ plot(data[[1]])
 ```
 
 ![](README_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
-
-}

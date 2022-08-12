@@ -1,0 +1,81 @@
+---
+title: "Data Catalog Schema"
+author: "Mike Johnson"
+date: "2022-08-12"
+output: html_document
+---
+
+# Outline
+
+The WIP catalog is intended to leverage the avaible opportunities with web hosted files (`FTP`, `s3`, ect), `OpenDAP` servers, and `STAC` catalogs.
+
+Data that is dealt with is limited to 2 or 3D information presented on a rectilinear grid.
+
+# Schema
+
+| **Purpose** | **Name** | **Description** | **Example VRT** | **Example OpenDap** | **Example STAC** | 
+| --- | --- | ---- | ---- | ---- | ---- |
+| Data | **collection** | The primary resource name, agency, or catalog of data _assets_ | 3DEP| GridMET | STAC Collection |
+| Data | **asset** | The subdatasets or assets in the _collection_. The ID should be unique within the collection that contains the asset.| 30m DEM | OpenDAP endpoint | STAC asset |
+| Data | **URL** |The specific access URL | `/vsicurl/...` | `https://...` | STAC href |
+| Data | **type** |The data format reached by _URL_ | vrt | dap  | stac_asset |
+| Data | **varname** | The filename (sans extension), or, dap varname | | | |
+| Data | **variable** | General high order variable type | Landcover | Rainfall | Imagery|
+| Data | **description** |Long form description of _asset_ | User defined | NetCDF long name| STAC Title |
+| Data | **units** | The units of the values in the _asset_| "m" | "mm" | "wl" |
+| Modeled Data | **model** | The name of the model generating data in _asset_ | NA | "CCSM4" | "CCSM4" |
+| Modeled Data | **ensemble** | The _model_ ensemble member used to generate data in _asset_ | | | |
+| Modeled Data | **scenario** | The _model_ scenario used to generate data in _asset_ | | | |
+| Temporal Data | **duration** |The range of time covered by the asset represented as {start}/{end}, open dates are represented with `..` | prodcution date or NA | OpenDap time dimension values | STAC datetime|
+| Temporal Data | **interval** | A numeric stride with a unit, built as a string | NA | "1 day" | STAC ... |
+| Temporal Data | **T_name** | The name of the time dimension | | | |
+| Temporal Data | **nT** | The number of time layers in the model | 1 | 30 | |
+| Spatial Data | **X1** | The first value in the X coordinate array, typically, but not always `Xmin` |  | | STAC bbox element 1 |
+| Spatial Data | **Xn** | The _last_ value in the `X` coordinate array, typically, but not always `Xmax` | | |STAC bbox element 2 |
+| Spatial Data | **Y1** | The first value in the `Y` coordinate array, typically, but not always `Ymin` | | |STAC bbox element 3 |
+| Spatial Data | **Yn** | The last value in the `Y` coordinate array, typically, but not always `Ymin` | | | STAC bbox element 4 |
+| Spatial Data | **X_name** | The name of the `X` dimension/variable | | | |
+| Spatial Data | **Y_name** | The name of the `Y` dimension/variable | | | |
+| Spatial Data | **X_res** | The resolution of the data in the `X` direction `(abs(X1-Xn) / ncol)` | | | |
+| Spatial Data | **Y_res** | The resolution of the data in the `Y` direction `(abs(Y1-Yn) / nrow)`| | | |
+| Spatial Data | **ncol** | The number of values in the X direction | | | |
+| Spatial Data | **nrow** | The number of grid cells  in the Y direction | | | |
+| Spatial Data | **crs** | The coordinate reference system expressed as PROJ4 string| | | |
+| Spatial Data | **toptobottom** | Specific to OpenDap data describing the arrangment of the unfolded vector | | | |
+
+collection / source: USGS 3DEP, NCLD, loca, maca
+URL: 
+type: dap, tif, vrt, stac
+id: dataset (30m DEM, "Landcover", "") (sub collection)
+varname: filename (sans extension), or, dap varname
+variable: general high order variable type (EG elevation, landcover, tmax)
+description: long name/full description
+units: units of variable
+model
+ensemble
+sceanrio
+interval
+duration
+T_name
+X1
+Xn
+Y1
+Yn
+toptobottom
+resX
+resY
+ncol
+nrow
+X_name
+Y_name
+proj
+
+
+
+# Examples
+
+# VRT
+
+# OpenDAP
+
+# STAC

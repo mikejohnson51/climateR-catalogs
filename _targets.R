@@ -44,7 +44,8 @@ list(
                                  "docs/catalog.json"),
              format = "file"),
 
-  tar_render(readme, "README.Rmd")
+  tar_render(readme, "README.Rmd"),
+  tar_render(schema, "docs/schema.Rmd")
 
 )
 
