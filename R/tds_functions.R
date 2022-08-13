@@ -12,7 +12,6 @@ get_loca = function(id = "loca"){
     mutate(tiled = "T")
 }
 
-
 get_bcca <- function(id = "bcca"){
 
   bind_rows(
@@ -71,7 +70,6 @@ get_maurer = function(id = "maurer"){
   mutate(tiled = "")
 }
 
-####  ssebopeta ####
 get_ssebopeta = function(id = "ssebopeta"){
   opendap.catalog::read_dap_file(URL = "https://cida.usgs.gov/thredds/dodsC/ssebopeta/monthly",
                 id = id) %>%
@@ -79,7 +77,6 @@ get_ssebopeta = function(id = "ssebopeta"){
   mutate(tiled = "")
 }
 
-####  PRISM Monthly ####
 get_prism_monthly = function(id = "prism_monthly"){
   opendap.catalog::read_dap_file(URL = "https://cida.usgs.gov/thredds/dodsC/prism_v2",
                 id = id) %>%

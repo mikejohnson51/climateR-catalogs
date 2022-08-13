@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# WIP: climateR-catalogs
+# climateR-catalogs
 
 <!-- badges: start -->
 <!-- badges: end -->
@@ -32,11 +32,11 @@ cat =  fromJSON("docs/catalog.json", simplifyDataFrame = TRUE)
 
 # Unique datasets
 nrow(cat)
-#> [1] 3151
+#> [1] 6407
 
 # Unique sources
 length(unique(cat$source))  + length(unique(cat$id))  
-#> [1] 16
+#> [1] 22
 ```
 
 ### Examples
@@ -168,7 +168,11 @@ t(cat)
 #> interval    "1 days"                                                        
 #> nT          "20454"                                                         
 #> toptobottom "TRUE"                                                          
-#> tiled       "T"
+#> tiled       "T"                                                             
+#> link        NA                                                              
+#> collection  NA                                                              
+#> asset       NA                                                              
+#> type        NA
 
 data = dap(URL  = cat$URL, 
            AOI = aoi_get(state = "FL"), 

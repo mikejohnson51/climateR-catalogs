@@ -42,6 +42,7 @@ Data that is dealt with is limited to 2 or 3D information presented on a rectili
 | Spatial Data | **nrow** | The number of grid cells  in the Y direction `(abs(Y1-Yn) / Y_res)`| | | |
 | Spatial Data | **crs** | The coordinate reference system expressed as PROJ4 string| | | |
 | Spatial Data | **toptobottom** | Specific to OpenDap data describing the arrangement of the unfolded vector | | | |
+| Spatial Data | **tiled** | is data tiled spatially (XY), temporally (T), or not (NA) | | | |
 
 
 # Examples

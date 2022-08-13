@@ -16,7 +16,7 @@ tar_visnetwork() %>%
 
 ```
 
-# WIP: climateR-catalogs
+# climateR-catalogs
 
 <!-- badges: start -->
 <!-- badges: end -->
