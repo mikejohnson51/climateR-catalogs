@@ -19,13 +19,14 @@ these.
 ## Targets
 
 See interactive version
-[here](https://mikejohnson51.github.io/climateR-catalogs/)
-
-![](README_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
+[here](https://mikejohnson51.github.io/climateR-catalogs/) and seeks to
+follow the WIP schema
+[here](https://mikejohnson51.github.io/climateR-catalogs/schema.html)
 
 ### Today:
 
-The catalog looks like this on 2022-08-12:
+The catalog looks like this on 2022-08-12 reading local version (same as
+pushed one found in `docs`)
 
 ``` r
 cat =  fromJSON("docs/catalog.json", simplifyDataFrame = TRUE)
@@ -46,12 +47,9 @@ Here is a minimal example with the base information added:
 ``` r
 pacman::p_load(jsonlite, dplyr, opendap.catalog, AOI, terra)
 
-url = "https://mikejohnson51.github.io/climateR-catalogs/catalog.json"
+nlcd = filter(cat, description == "NLCD Land_Cover L48 2019")
 
-cat = fromJSON(url, simplifyDataFrame = TRUE) %>% 
-  filter(description == "NLCD Land_Cover L48 2019")
-
-t(cat)
+t(nlcd)
 #>             [,1]                                                                                                 
 #> source      NA                                                                                                   
 #> product     "USGS NLCD Land Cover"                                                                               
@@ -83,11 +81,15 @@ t(cat)
 #> interval    NA                                                                                                   
 #> nT          NA                                                                                                   
 #> toptobottom NA                                                                                                   
-#> tiled       NA
+#> tiled       NA                                                                                                   
+#> link        NA                                                                                                   
+#> collection  NA                                                                                                   
+#> asset       NA                                                                                                   
+#> type        NA
 ```
 
 ``` r
-(output   = dap(catalog = cat,  AOI = aoi_get("Fort Collins")))
+(output   = dap(catalog = nlcd,  AOI = aoi_get("Fort Collins")))
 #> class       : SpatRaster 
 #> dimensions  : 667, 548, 1  (nrow, ncol, nlyr)
 #> resolution  : 30, 30  (x, y)
@@ -103,40 +105,39 @@ t(cat)
 plot(output)
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
 
 This is still a little clunky but you can pass multi-row “catalog”
 data.frames straight to dap! For example say you want soil sand content,
 land cover and elevation for the city of Fort Collins:
 
 ``` r
-cat = fromJSON("docs/catalog.json", simplifyDataFrame = TRUE) %>% 
-  filter(description == c("NLCD Land_Cover L48 2019") |
+multilayer = filter(cat, description == c("NLCD Land_Cover L48 2019") |
          product %in% c("mean sand 0-5cm", "30m CONUS DEM"))
 
 
-output  = lapply(1:nrow(cat), function(x){   dap(catalog = cat[x,],  
+output  = lapply(1:nrow(multilayer), function(x){   dap(catalog = multilayer[x,],  
                                          AOI = aoi_get("Fort Collins")) })
 
 par(mfrow = c(2,2))
 for(i in 1:3){
-  plot(output[[i]], main = cat$product[i])  
+  plot(output[[i]], main = multilayer$product[i])  
 }  
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
 
 ### Hitting OpenDap resources!
 
 ``` r
-cat = fromJSON("docs/catalog.json", simplifyDataFrame = TRUE) %>% 
-  filter(id == 'bcca', 
-         variable  ==   'tasmin',   
-         model == 'MPI-ESM-LR', 
-         ensemble == 'r1i1p1',
-         scenario == "historical") 
+dap_resource = filter(cat, 
+             id == 'bcca', 
+             variable  ==   'tasmin',   
+             model == 'MPI-ESM-LR', 
+             ensemble == 'r1i1p1',
+             scenario == "historical") 
 
-t(cat)
+t(dap_resource)
 #>             [,1]                                                            
 #> source      NA                                                              
 #> product     NA                                                              
@@ -174,9 +175,9 @@ t(cat)
 #> asset       NA                                                              
 #> type        NA
 
-data = dap(URL  = cat$URL, 
+data = dap(URL  = dap_resource$URL, 
            AOI = aoi_get(state = "FL"), 
-           varname = cat$varname,
+           varname = dap_resource$varname,
            startDate = "2000-10-01",
            endDate   = "2000-10-04")
 #> source:   https://cida.usgs.gov/thredds/dodsC/cmip5_bcca/historical 
@@ -194,20 +195,18 @@ data = dap(URL  = cat$URL,
 plot(data[[1]])
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
 ### Global
 
 ``` r
-cat = fromJSON("docs/catalog.json", simplifyDataFrame = TRUE) %>% 
-  filter(source == "ISRIC Soil Grids",
-         variable == 'silt') %>%
+nz_soil = filter(cat, source == "ISRIC Soil Grids", variable == 'silt') %>%
   slice(1)
 
-data = dap(URL  = cat$URL, 
+data = dap(URL  = nz_soil$URL, 
            AOI = aoi_get(country  = "New Zealand"))
 
 plot(data[[1]])
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
