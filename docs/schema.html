@@ -11,7 +11,7 @@
 
 <meta name="author" content="Mike Johnson" />
 
-<meta name="date" content="2022-08-12" />
+<meta name="date" content="2022-08-22" />
 
 <title>Data Catalog Schema</title>
 
@@ -365,7 +365,7 @@ pre code {
 
 <h1 class="title toc-ignore">Data Catalog Schema</h1>
 <h4 class="author">Mike Johnson</h4>
-<h4 class="date">2022-08-12</h4>
+<h4 class="date">2022-08-22</h4>
 
 </div>
 
@@ -394,9 +394,9 @@ on a rectilinear grid.</p>
 <th><strong>Purpose</strong></th>
 <th><strong>Name</strong></th>
 <th><strong>Description</strong></th>
+<th><strong>Type</strong></th>
 <th><strong>Example VRT</strong></th>
 <th><strong>Example OpenDap</strong></th>
-<th><strong>Example STAC</strong></th>
 </tr>
 </thead>
 <tbody>
@@ -405,40 +405,40 @@ on a rectilinear grid.</p>
 <td><strong>collection</strong></td>
 <td>The primary resource name, agency, or catalog of data
 <em>assets</em></td>
+<td>string</td>
 <td>3DEP</td>
 <td>GridMET</td>
-<td>STAC Collection</td>
 </tr>
 <tr class="even">
 <td>Data</td>
 <td><strong>asset</strong></td>
 <td>The subdatasets or assets in the <em>collection</em>. The ID should
 be unique within the collection that contains the asset.</td>
+<td>string</td>
 <td>30m DEM</td>
 <td>OpenDAP endpoint</td>
-<td>STAC asset</td>
 </tr>
 <tr class="odd">
 <td>Data</td>
 <td><strong>URL</strong></td>
 <td>The specific access URL</td>
+<td>string</td>
 <td><code>/vsicurl/...</code></td>
 <td><code>https://...</code></td>
-<td>STAC href</td>
 </tr>
 <tr class="even">
 <td>Data</td>
 <td><strong>type</strong></td>
 <td>The data format reached by <em>URL</em></td>
+<td>string</td>
 <td>vrt</td>
 <td>dap</td>
-<td>stac_asset</td>
 </tr>
 <tr class="odd">
 <td>Data</td>
 <td><strong>varname</strong></td>
 <td>The filename (sans extension), or, dap varname</td>
-<td></td>
+<td>string</td>
 <td></td>
 <td></td>
 </tr>
@@ -446,74 +446,133 @@ be unique within the collection that contains the asset.</td>
 <td>Data</td>
 <td><strong>variable</strong></td>
 <td>General high order variable type</td>
+<td>string</td>
 <td>Land cover</td>
 <td>Rainfall</td>
-<td>Imagery</td>
 </tr>
 <tr class="odd">
 <td>Data</td>
 <td><strong>description</strong></td>
 <td>Long form description of <em>asset</em></td>
+<td>string</td>
 <td>User defined</td>
 <td>NetCDF long name</td>
-<td>STAC Title</td>
 </tr>
 <tr class="even">
 <td>Data</td>
 <td><strong>units</strong></td>
 <td>The units of the values in the <em>asset</em></td>
+<td>string</td>
 <td>“m”</td>
 <td>“mm”</td>
-<td>“wl”</td>
 </tr>
 <tr class="odd">
+<td>Data</td>
+<td><strong>datetime</strong></td>
+<td>The reference datetime of the <em>asset</em> if start_datetime and
+end_datetime are not appropriate</td>
+<td>DATETIME</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>Data</td>
+<td><strong>start_datetime</strong></td>
+<td>The reference datetime of the <em>asset</em></td>
+<td>DATETIME</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>Data</td>
+<td><strong>end_datetime</strong></td>
+<td>The reference datetime of the <em>asset</em></td>
+<td>DATETIME</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>Data</td>
+<td><strong>horizon</strong></td>
+<td>The time between the datetime and the forecast datetime. Formatted
+as <a href="https://en.wikipedia.org/wiki/ISO_8601#Durations">ISO 8601
+duration</a>, e.g. PT6H for a 6-hour forecast.</td>
+<td>string</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>Data</td>
+<td><strong>deprecated</strong></td>
+<td>Set this to true if a newer version of the <em>asset</em> is
+available</td>
+<td>bool</td>
+<td></td>
+<td><a href="https://github.com/stac-extensions/forecast#fields">STAC
+forecast extension</a> - deprecated</td>
+</tr>
+<tr class="even">
 <td>Modeled Data</td>
 <td><strong>model</strong></td>
 <td>The name of the model generating data in <em>asset</em></td>
+<td>string</td>
 <td>NA</td>
 <td>“CCSM4”</td>
-<td>“CCSM4”</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Modeled Data</td>
 <td><strong>ensemble</strong></td>
 <td>The <em>model</em> ensemble member used to generate data in
 <em>asset</em></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr class="odd">
-<td>Modeled Data</td>
-<td><strong>scenario</strong></td>
-<td>The <em>model</em> scenario used to generate data in
-<em>asset</em></td>
-<td></td>
+<td>int</td>
 <td></td>
 <td></td>
 </tr>
 <tr class="even">
+<td>Modeled Data</td>
+<td><strong>scenario</strong></td>
+<td>The <em>model</em> scenario used to generate data in
+<em>asset</em></td>
+<td>string</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
 <td>Temporal Data</td>
 <td><strong>duration</strong></td>
 <td>The range of time covered by the asset represented as {start}/{end},
 open dates are represented with <code>..</code></td>
+<td>string</td>
 <td>production date or NA</td>
 <td>OpenDap time dimension values</td>
-<td>STAC datetime</td>
+</tr>
+<tr class="even">
+<td>Temporal Data</td>
+<td><strong>accumulation_period</strong></td>
+<td>Alternative to duration, If the data is not only for a specific
+instance in time but instead is for an accumulation over a certain
+period you can specify the length here. Formatted as <a href="https://en.wikipedia.org/wiki/ISO_8601#Durations">ISO 8601
+duration</a>, e.g. PT3H for a 3-hour accumulation. If not given, assumes
+that the forecast is for an instance in time as if this was set to P0TS
+(0 seconds).</td>
+<td>production date or NA</td>
+<td>OpenDap time dimension values</td>
+<td><a href="https://github.com/stac-extensions/forecast#fields">STAC
+forecast extension</a> - forecast:accumulation_period</td>
 </tr>
 <tr class="odd">
 <td>Temporal Data</td>
 <td><strong>interval</strong></td>
 <td>A numeric stride with a unit, built as a string</td>
+<td>string</td>
 <td>NA</td>
 <td>“1 day”</td>
-<td>STAC …</td>
 </tr>
 <tr class="even">
 <td>Temporal Data</td>
 <td><strong>T_name</strong></td>
 <td>The name of the time dimension</td>
-<td></td>
+<td>string</td>
 <td></td>
 <td></td>
 </tr>
@@ -521,51 +580,51 @@ open dates are represented with <code>..</code></td>
 <td>Temporal Data</td>
 <td><strong>nT</strong></td>
 <td>The number of time layers in the model</td>
+<td>float</td>
 <td>1</td>
 <td>30</td>
-<td></td>
 </tr>
 <tr class="even">
 <td>Spatial Data</td>
 <td><strong>X1</strong></td>
 <td>The first value in the X coordinate array, typically, but not always
 <code>Xmin</code></td>
+<td>float</td>
 <td></td>
 <td></td>
-<td>STAC bbox element 1</td>
 </tr>
 <tr class="odd">
 <td>Spatial Data</td>
 <td><strong>Xn</strong></td>
 <td>The <em>last</em> value in the <code>X</code> coordinate array,
 typically, but not always <code>Xmax</code></td>
+<td>float</td>
 <td></td>
 <td></td>
-<td>STAC bbox element 2</td>
 </tr>
 <tr class="even">
 <td>Spatial Data</td>
 <td><strong>Y1</strong></td>
 <td>The first value in the <code>Y</code> coordinate array, typically,
 but not always <code>Ymin</code></td>
+<td>float</td>
 <td></td>
 <td></td>
-<td>STAC bbox element 3</td>
 </tr>
 <tr class="odd">
 <td>Spatial Data</td>
 <td><strong>Yn</strong></td>
 <td>The last value in the <code>Y</code> coordinate array, typically,
 but not always <code>Ymin</code></td>
+<td>float</td>
 <td></td>
 <td></td>
-<td>STAC bbox element 4</td>
 </tr>
 <tr class="even">
 <td>Spatial Data</td>
 <td><strong>X_name</strong></td>
 <td>The name of the <code>X</code> dimension/variable</td>
-<td></td>
+<td>string</td>
 <td></td>
 <td></td>
 </tr>
@@ -573,7 +632,7 @@ but not always <code>Ymin</code></td>
 <td>Spatial Data</td>
 <td><strong>Y_name</strong></td>
 <td>The name of the <code>Y</code> dimension/variable</td>
-<td></td>
+<td>string</td>
 <td></td>
 <td></td>
 </tr>
@@ -582,7 +641,7 @@ but not always <code>Ymin</code></td>
 <td><strong>X_res</strong></td>
 <td>The resolution of the data in the <code>X</code> direction
 <code>(abs(X1-Xn) / ncol)</code></td>
-<td></td>
+<td>float</td>
 <td></td>
 <td></td>
 </tr>
@@ -591,7 +650,7 @@ but not always <code>Ymin</code></td>
 <td><strong>Y_res</strong></td>
 <td>The resolution of the data in the <code>Y</code> direction
 <code>(abs(Y1-Yn) / nrow)</code></td>
-<td></td>
+<td>float</td>
 <td></td>
 <td></td>
 </tr>
@@ -600,7 +659,7 @@ but not always <code>Ymin</code></td>
 <td><strong>ncol</strong></td>
 <td>The number of values in the X direction
 <code>(abs(X1-Xn) / X_res)</code></td>
-<td></td>
+<td>int</td>
 <td></td>
 <td></td>
 </tr>
@@ -609,7 +668,7 @@ but not always <code>Ymin</code></td>
 <td><strong>nrow</strong></td>
 <td>The number of grid cells in the Y direction
 <code>(abs(Y1-Yn) / Y_res)</code></td>
-<td></td>
+<td>int</td>
 <td></td>
 <td></td>
 </tr>
@@ -617,24 +676,32 @@ but not always <code>Ymin</code></td>
 <td>Spatial Data</td>
 <td><strong>crs</strong></td>
 <td>The coordinate reference system expressed as PROJ4 string</td>
-<td></td>
+<td>string</td>
 <td></td>
 <td></td>
 </tr>
 <tr class="odd">
 <td>Spatial Data</td>
-<td><strong>toptobottom</strong></td>
-<td>Specific to OpenDap data describing the arrangement of the unfolded
-vector</td>
-<td></td>
+<td><strong>epsg</strong></td>
+<td>alternatve to crs, the epsg</td>
+<td>int</td>
 <td></td>
 <td></td>
 </tr>
 <tr class="even">
 <td>Spatial Data</td>
+<td><strong>toptobottom</strong></td>
+<td>Specific to OpenDap data describing the arrangement of the unfolded
+vector</td>
+<td>string</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>Spatial Data</td>
 <td><strong>tiled</strong></td>
 <td>is data tiled spatially (XY), temporally (T), or not (NA)</td>
-<td></td>
+<td>string</td>
 <td></td>
 <td></td>
 </tr>
