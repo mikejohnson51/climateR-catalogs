@@ -19,7 +19,7 @@ Data that is dealt with is limited to 2 or 3D information presented on a rectili
 | Data | **asset** | The subdatasets or assets in the _collection_. The ID should be unique within the collection that contains the asset.| 30m DEM | OpenDAP endpoint | STAC asset |
 | Data | **URL** |The specific access URL | `/vsicurl/...` | `https://...` | STAC href |
 | Data | **type** |The data format reached by _URL_ | vrt | dap  | stac_asset |
-| Data | **varname** | The filename (sans extension), or, dap varname | | | |
+| Data | **varname** | The filename (sans extension), band name, or dap varname | filename or band name | varname | ? |
 | Data | **variable** | General high order variable type | Land cover | Rainfall | Imagery|
 | Data | **description** |Long form description of _asset_ | User defined | NetCDF long name| STAC Title |
 | Data | **units** | The units of the values in the _asset_| "m" | "mm" | "wl" |
@@ -53,6 +53,8 @@ Data that is dealt with is limited to 2 or 3D information presented on a rectili
 
 
 ```
+
+# Mulitband TIFF
 
 # OpenDAP
 

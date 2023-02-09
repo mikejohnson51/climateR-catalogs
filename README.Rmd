@@ -10,7 +10,7 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 
-library(dplyr); library(targets); library(jsonlite)
+library(dplyr); library(targets);library(arrow)
 tar_visnetwork() %>% 
   visNetwork::visSave("docs/index.html")
 
@@ -21,27 +21,41 @@ tar_visnetwork() %>%
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of `climateR-catalogs` is to build data catalogs usable with `terra`, `climateR`, `gdalio`, `opendap.catalog`, `geoknife`, `stars` ect.
+The goal of `climateR-catalogs` is to "automate" a collection of data catalogs usable with `terra`, `climateR`, `gdalio`, `geoknife`, `stars`, etc.
 
-The catalog(s) will be built using `targets` in this repo, and deployed as JSON artifacts at "https://mikejohnson51.github.io/climateR-catalogs/catalog.json". Hopefully a more authorative home at USGS or NOAA can be found to host these.
+The catalog(s) will be built using `targets` in this repo, and deployed as JSON/parquet/rds artifacts at "https://mikejohnson51.github.io/climateR-catalogs/catalog.{ext}". 
+
+Hopefully a more authoritative home at USGS or NOAA can be found to host these.
+
+## Scope
+
+The catalog will hope to support 4 types of data source and will limit itself to non-authenticated public data assets. The included types will be:
+
+1. Aggregated NetCDF (via OpenDap)
+2. Non aggregated NetCDF (via OpenDap)
+3. tif/COG/vrt hosted by s3/FTP/ect
+4. STAC catalog (WIP)
 
 ## Targets
 
-See interactive version [here](https://mikejohnson51.github.io/climateR-catalogs/) and seeks to follow the WIP schema [here](https://mikejohnson51.github.io/climateR-catalogs/schema.html)
+Targets will be used in an attempt to ensure maintenance is possible. The interactive version of the latest run can be seen here [here](https://mikejohnson51.github.io/climateR-catalogs/)
 
+## Schema
 
-### Today:
+To align the 4 categories of data a WIP schema can be found [here](https://mikejohnson51.github.io/climateR-catalogs/schema.html)
+
+### Catalog to date:
 
 The catalog looks like this on `r Sys.Date()` reading local version (same as pushed one found in `docs`)
 
 ```{r}
-cat =  fromJSON("docs/catalog.json", simplifyDataFrame = TRUE)
+cat =  read_parquet("docs/catalog.parquet")
 
 # Unique datasets
 nrow(cat)
 
-# Unique sources
-length(unique(cat$source))  + length(unique(cat$id))  
+# Unique products
+length(unique(cat$asset))
 
 ```
 
@@ -51,9 +65,9 @@ length(unique(cat$source))  + length(unique(cat$id))
 Here is a minimal example with the base information added:
 
 ```{r cars}
-pacman::p_load(jsonlite, dplyr, opendap.catalog, AOI, terra)
+pacman::p_load(dplyr, opendap.catalog, AOI, terra)
 
-nlcd = filter(cat, description == "NLCD Land_Cover L48 2019")
+nlcd = filter(cat, id == "NLCD", asset == '2019 Land Cover L48')
 
 t(nlcd)
 ```
@@ -68,12 +82,9 @@ This is still a little clunky but you can pass multi-row "catalog" data.frames s
 dap! For example say you want soil sand content, land cover and elevation for the city of Fort Collins:
 
 ```{r}
-multilayer = filter(cat, description == c("NLCD Land_Cover L48 2019") |
-         product %in% c("mean sand 0-5cm", "30m CONUS DEM"))
+multilayer = filter(cat,  asset %in% c("2019 Land Cover L48", "30m CONUS DEM", "sand_mean_0_5"))
 
-
-output  = lapply(1:nrow(multilayer), function(x){   dap(catalog = multilayer[x,],  
-                                         AOI = aoi_get("Fort Collins")) })
+output  = lapply(1:nrow(multilayer), function(x){   dap(catalog = multilayer[x,], AOI = aoi_get("Fort Collins")) })
 
 par(mfrow = c(2,2))
 for(i in 1:3){
@@ -105,11 +116,9 @@ plot(data[[1]])
 ### Global
 
 ```{r}
-nz_soil = filter(cat, source == "ISRIC Soil Grids", variable == 'silt') %>%
-  slice(1)
+nz_soil = filter(cat, id == "ISRIC Soil Grids", variable == 'silt_0-5cm_mean')
 
-data = dap(URL  = nz_soil$URL, 
-           AOI = aoi_get(country  = "New Zealand"))
+data = dap(URL  = nz_soil$URL,  AOI = aoi_get(country  = "New Zealand"))
 
 plot(data[[1]])
 ```
