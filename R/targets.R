@@ -798,3 +798,15 @@ get_lcmap = function(base = "https://edcintl.cr.usgs.gov/downloads/sciweb1/share
     vrt_meta(all = FALSE) %>%
     rectify_schema(schema)
 }
+
+
+# Data Source 27 ----------------------------------------------------------
+
+get_prism_daily = function(){
+  read_dap_file(URL = 'http://convection.meas.ncsu.edu:8080/thredds/dodsC/prism/daily/combo/2021/PRISM_combo_20211010.nc',
+                id = 'prism_daily') %>%
+    mutate(duration = '1981-01-01/..', variable = varname) %>%
+    dap_meta() %>%
+    mutate(URL =   gsub("20211010", "{YYYYMMDD}", gsub("/2021\\/", "/{YYYY}/", URL)), tiled = "T")
+}
+

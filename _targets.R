@@ -1,7 +1,7 @@
 library(targets)
 
 source("R/utils.R")
-source("R/tds_mes.R")
+source("R/targets.R")
 
 #pacman::p_load("terra", "sf", "rvest", "glue", "dplyr", "jsonlite", "logger", "rvest", "opendap.catalog","RNetCDF", "data.table")
 tar_option_set(packages = c("terra", "sf", "rvest", "glue", "dplyr",
@@ -26,6 +26,7 @@ list(
   tar_target(maurer, get_maurer()),
   tar_target(ssebopeta, get_ssebopeta()),
   tar_target(prism_monthly, get_prism_monthly()),
+  tar_target(prism_daily, get_prism_daily()),
   tar_target(hbv, get_hbv()),
   tar_target(elevation, get_elevation_data()),
   tar_target(polaris, get_polaris()),
@@ -56,6 +57,7 @@ list(
                                       maurer,
                                       ssebopeta,
                                       prism_monthly,
+                                      prism_daily,
                                       hbv,
                                       elevation,
                                       polaris,

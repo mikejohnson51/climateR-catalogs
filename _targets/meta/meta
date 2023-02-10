@@ -5,7 +5,7 @@ bcca|stem|6f3fad57315a4027|1c52c26663b82792|cc7ab279f0a3bd60|2085916740||t19397.
 bcsd|stem|c6399ba82f209e12|411e7b333dbc3f71|687e86cf93147580|-614768856||t19397.1789324814s|6c2290e39f8dcfd8|699|rds|local|vector|||2.551|raw must include variable column. trying varname. Chance of failure.... Some schema missing model, ensemble, scenario|
 bcsd_vic|stem|687c14e65817b37b|f2a199a5b8f77ca6|ce902b94f7169b64|2023013175||t19397.1783424159s|d274b5c005d7026a|8492|rds|local|vector|||78.44|Some schema missing long_name, description|
 build_worldclim_hist|function|8191e5be7743a034|||||||||||||||
-cat|stem|2747a0311f3f1101|f687f5057da82cc9|668d4bcd877001c7|1157867945|docs/catalog.rds|t19397.7754517834s|e17cb4b013801cc8|584531|file|local|vector|||3.937||
+cat|stem|4abc40a167b913d7|1abb10fa5d864257|73b884716aafb508|1157867945|docs/catalog.rds|t19398.0120921275s|39398429bfb2278a|588849|file|local|vector|||3.87||
 create_catalog|function|8d25e109376e987f|||||||||||||||
 data|stem|e8e93802e071b114|4525b922227c51ac|e2f8326f1549655c|1588979285||t19215.7841694801s|98949606cf9cbcae|1356|rds|local|vector|||0.253||
 daymet4|stem|09e15634277c3e00|2c214a79d8eb834d|fc1a0ef9b2537335|285403826||t19397.1813554435s|9d80559eff4ff2d6|1035|rds|local|vector|||209.333|Some schema missing ensemble|
@@ -41,6 +41,7 @@ get_maurer|function|707747bd22ef9ab8|||||||||||||||
 get_modis|function|778e6ca726cae6ca|||||||||||||||
 get_nlcd|function|301d5e3dc0b31a46|||||||||||||||
 get_polaris|function|1a04ef9c1bbbffeb|||||||||||||||
+get_prism_daily|function|6bdd047c4ce39f77|||||||||||||||
 get_prism_monthly|function|6602478d83cf3ac1|||||||||||||||
 get_ssebopeta|function|63188e98f3e68540|||||||||||||||
 get_terraclim|function|1089e09ec9286fe6|||||||||||||||
@@ -79,6 +80,7 @@ polaris|stem|9ca39d7c0e539e92|8e4eda688652f458|9df82e30e94f87ae|588094080||t1939
 polaris_describe|function|8a43de254eee4c21|||||||||||||||
 polaris_urls|function|7a2b1cb87646c1d3|||||||||||||||
 polaris_vrts|stem|c488e3be6aa95550|c5c95bfcfe92b5aa|8b4f17871b085478|-227860971||t19216.8222078193s|e84c9df2b78503dc|4036|rds|local|vector|||7.422||
+prism_daily|stem|2a02ad8fc6670366|495d194596a99a0c|e6d2342bbb2328dc|1373821707||t19397.9887508685s|7e5949761d67f501|620|rds|local|vector|||6.209||
 prism_monthly|stem|76905b653bbf455b|9cdee87d81217ee5|0f10938f134caf2f|57075434||t19397.1766961106s|eb769f42e7bbd861|672|rds|local|vector|||8.535|Some schema missing model, ensemble, scenario|
 read_tds|function|b995b25fabdb6a4b|||||||||||||||
 readme|stem|44ad1f2d3c2420f3|2419a0f44a0792be|4745aa592080ea1d|-165896733|README.md*README.Rmd*README_files|t19216.8640130933s|9b131ee7aae0c2cf|13280|file|local|vector|||119.213||
