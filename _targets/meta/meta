@@ -5,7 +5,7 @@ bcca|stem|6f3fad57315a4027|1c52c26663b82792|cc7ab279f0a3bd60|2085916740||t19397.
 bcsd|stem|c6399ba82f209e12|411e7b333dbc3f71|687e86cf93147580|-614768856||t19397.1789324814s|6c2290e39f8dcfd8|699|rds|local|vector|||2.551|raw must include variable column. trying varname. Chance of failure.... Some schema missing model, ensemble, scenario|
 bcsd_vic|stem|687c14e65817b37b|f2a199a5b8f77ca6|ce902b94f7169b64|2023013175||t19397.1783424159s|d274b5c005d7026a|8492|rds|local|vector|||78.44|Some schema missing long_name, description|
 build_worldclim_hist|function|8191e5be7743a034|||||||||||||||
-cat|stem|3b6e3e1191499f95|7669ba47357a7443|5a6364e525b40152|1157867945|docs/catalog.rds|t19402.9862893233s|6174c8476d4e8e1c|564137|file|local|vector|||3.595||
+cat|stem|576b402e3bc28855|7669ba47357a7443|81985e480e86ca35|1157867945|docs/catalog.rds|t19402.9925981763s|c7a7ba9716820562|564210|file|local|vector|||3.833||
 create_catalog|function|8d25e109376e987f|||||||||||||||
 data|stem|e8e93802e071b114|4525b922227c51ac|e2f8326f1549655c|1588979285||t19215.7841694801s|98949606cf9cbcae|1356|rds|local|vector|||0.253||
 daymet4|stem|09e15634277c3e00|2c214a79d8eb834d|fc1a0ef9b2537335|285403826||t19397.1813554435s|9d80559eff4ff2d6|1035|rds|local|vector|||209.333|Some schema missing ensemble|
@@ -49,7 +49,7 @@ get_terraclim_normals|function|d91b17825c6fba23|||||||||||||||
 get_topowx|function|8488b01c6a9bf145|||||||||||||||
 get_vic|function|cde61c5a8eb89a94|||||||||||||||
 get_worldclim_hist|function|fb358285155054ed|||||||||||||||
-get_WUS_HSP|function|9d424e241867a174|||||||||||||||
+get_WUS_HSP|function|bf0c3b990742ab26|||||||||||||||
 gridmet|stem|fc7727cb9a72650d|43f90dd2509f2ca6|797fe6109e1428b1|1188595467||t19398.3090149815s|c56086d98179462e|1975|rds|local|vector|||37.007|Some schema missing model, ensemble, scenario|
 hbv|stem|d8e11e4c15f4803a|0f5b31ed8891a5a8|12f530384a98d893|535951687||t19397.1819834453s|517f53a615cf3573|1244|rds|local|vector|||14.07|Some schema missing model, ensemble, scenario, T_name, duration, interval, nT, X_name, Y_name, toptobottom|
 hbv_vrts|stem|52826fcdf21b7a69|0f5b31ed8891a5a8|7f7d3e0e84cf4512|-1881973028||t19217.0183245542s|6168bd1d73e2c7a9|860|rds|local|vector|||12.901||
@@ -105,4 +105,4 @@ vrt_meta|function|f2e8f829a1e10e49|||||||||||||||
 vrts_meta|function|2ee40c1a176f1ee3|||||||||||||||
 wordclim_hist|stem|15bdaccdaf4d2ab4|eb9a065ef426f83c|e320cc7eb54f970e|-1613451323||t19395.9333530239s|95cd5abf6bbd7b6f|2014|rds|local|vector|||24.274|GDAL Error 1 cpl_unzOpenCurrentFile failed. GDAL Error 1 cpl_unzOpenCurrentFile failed. GDAL Error 1 cpl_unzOpenCurrentFile failed. GDAL Error 1 cpl_unzOpenCurrentFile failed. GDAL Error 1 cpl_unzOpenCurrentFile failed. GDAL Error 1 cpl_unzOpenCurrentFile failed. GDAL Error 1 cpl_unzOpenCurrentFile failed. GDAL Error 1 cpl_unzOpenCurrentFile failed. GDAL Error 1 cpl_unzOpenCurrentFile failed. GDAL Error 1 cpl_unzOpenCurrentFile failed. GDAL Error 1 cpl_unzOpenCurrentFile failed. Some schema missing model, ensemble, scenario, T_name, X_name, Y_name|
 worldclim_hist|stem|15bdaccdaf4d2ab4|eb9a065ef426f83c|60bad099539b046f|2125491850||t19397.237390593s|95cd5abf6bbd7b6f|2014|rds|local|vector|||25.429|GDAL Error 1 cpl_unzOpenCurrentFile failed. GDAL Error 1 cpl_unzOpenCurrentFile failed. GDAL Error 1 cpl_unzOpenCurrentFile failed. GDAL Error 1 cpl_unzOpenCurrentFile failed. GDAL Error 1 cpl_unzOpenCurrentFile failed. GDAL Error 1 cpl_unzOpenCurrentFile failed. GDAL Error 1 cpl_unzOpenCurrentFile failed. GDAL Error 1 cpl_unzOpenCurrentFile failed. GDAL Error 1 cpl_unzOpenCurrentFile failed. GDAL Error 1 cpl_unzOpenCurrentFile failed. GDAL Error 1 cpl_unzOpenCurrentFile failed. Some schema missing model, ensemble, scenario, T_name, X_name, Y_name|
-WUS_HSP|stem|c89357ef36b61f93|4d4dd42e03a1b999|f5fe265283308e97|-904637496||t19402.985257474s|62e35ee46647f820|1802|rds|local|vector|||6.985|Some schema missing ensemble|
+WUS_HSP|stem|446db3a28340a20c|4d4dd42e03a1b999|58b4a7d91f20fc30|-904637496||t19402.9925461195s|d844b9f70a37959a|1827|rds|local|vector|||11.428|multiple methods tables found for metadata. Some schema missing ensemble|

@@ -866,7 +866,7 @@ get_WUS_HSP = function(){
 opendap.catalog::read_dap_file("https://cida.usgs.gov/thredds/dodsC/WUS_HSP/SD_A1B_2040s",
                                     id = "WUS_HSP") %>%
  separate_wider_delim(varname,
-                       names = c("model", "scenario", "junk", "junk2", "variable"),
+                       names = c("junk", "scenario", "junk2", "model", "variable"),
                        delim = "_",
                        too_many = "merge",
                        cols_remove = FALSE) %>%
