@@ -251,8 +251,7 @@ get_loca = function(id = "loca"){
                     names = c("variable", "model", "ensemble", "scenario"),
                     delim = "_",
                     cols_remove = FALSE) %>%
-    mutate(tiled = "T") %>%
-    mutate(tiled = "", type = "opendap", crs = proj, description = long_name) %>%
+    mutate(tiled = "T", type = "opendap", crs = proj, description = long_name) %>%
     rectify_schema(schema)
 }
 
@@ -859,5 +858,19 @@ get_prism_daily = function(){
            tiled = "T",
            interval = "1 day") %>%
     rectify_schema(schema)
+}
+
+# Data Source 28 ----------------------------------------------------------
+
+get_WUS_HSP = function(){
+opendap.catalog::read_dap_file("https://cida.usgs.gov/thredds/dodsC/WUS_HSP/SD_A1B_2040s",
+                                    id = "WUS_HSP") %>%
+ separate_wider_delim(varname,
+                       names = c("model", "scenario", "junk", "junk2", "variable"),
+                       delim = "_",
+                       too_many = "merge",
+                       cols_remove = FALSE) %>%
+  mutate(tiled = "", type = "opendap", crs = proj, description = long_name) %>%
+  rectify_schema(schema)
 }
 

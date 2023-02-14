@@ -1,11 +1,11 @@
 name|type|data|command|depend|seed|path|time|size|bytes|format|repository|iteration|parent|children|seconds|warnings|error
 .internal_get|function|1c04cac5f088856a|||||||||||||||
-.Random.seed|object|61786ed2da0ec66b|||||||||||||||
+.Random.seed|object|3144397fd857d357|||||||||||||||
 bcca|stem|6f3fad57315a4027|1c52c26663b82792|cc7ab279f0a3bd60|2085916740||t19397.1789028131s|01d82bd3f2d69181|4713|rds|local|vector|||34.007||
 bcsd|stem|c6399ba82f209e12|411e7b333dbc3f71|687e86cf93147580|-614768856||t19397.1789324814s|6c2290e39f8dcfd8|699|rds|local|vector|||2.551|raw must include variable column. trying varname. Chance of failure.... Some schema missing model, ensemble, scenario|
 bcsd_vic|stem|687c14e65817b37b|f2a199a5b8f77ca6|ce902b94f7169b64|2023013175||t19397.1783424159s|d274b5c005d7026a|8492|rds|local|vector|||78.44|Some schema missing long_name, description|
 build_worldclim_hist|function|8191e5be7743a034|||||||||||||||
-cat|stem|970a832ef6a1a5ee|478f5c1870d7c058|0c835017521f271a|1157867945|docs/catalog.rds|t19398.3090660775s|3f6620c03b418f90|562725|file|local|vector|||3.879||
+cat|stem|3b6e3e1191499f95|7669ba47357a7443|5a6364e525b40152|1157867945|docs/catalog.rds|t19402.9862893233s|6174c8476d4e8e1c|564137|file|local|vector|||3.595||
 create_catalog|function|8d25e109376e987f|||||||||||||||
 data|stem|e8e93802e071b114|4525b922227c51ac|e2f8326f1549655c|1588979285||t19215.7841694801s|98949606cf9cbcae|1356|rds|local|vector|||0.253||
 daymet4|stem|09e15634277c3e00|2c214a79d8eb834d|fc1a0ef9b2537335|285403826||t19397.1813554435s|9d80559eff4ff2d6|1035|rds|local|vector|||209.333|Some schema missing ensemble|
@@ -35,7 +35,7 @@ get_ldas|function|5800db45f36c1b49|||||||||||||||
 get_livneh|function|891325cbbe074898|||||||||||||||
 get_livneh_fluxes|function|0530353948beee6a|||||||||||||||
 get_livneh_monthly|function|302b9261d2818ef5|||||||||||||||
-get_loca|function|5dca3a75e1d043ef|||||||||||||||
+get_loca|function|986b22463199e254|||||||||||||||
 get_maca|function|f4080cff2eb92dc7|||||||||||||||
 get_maurer|function|707747bd22ef9ab8|||||||||||||||
 get_modis|function|778e6ca726cae6ca|||||||||||||||
@@ -49,6 +49,7 @@ get_terraclim_normals|function|d91b17825c6fba23|||||||||||||||
 get_topowx|function|8488b01c6a9bf145|||||||||||||||
 get_vic|function|cde61c5a8eb89a94|||||||||||||||
 get_worldclim_hist|function|fb358285155054ed|||||||||||||||
+get_WUS_HSP|function|9d424e241867a174|||||||||||||||
 gridmet|stem|fc7727cb9a72650d|43f90dd2509f2ca6|797fe6109e1428b1|1188595467||t19398.3090149815s|c56086d98179462e|1975|rds|local|vector|||37.007|Some schema missing model, ensemble, scenario|
 hbv|stem|d8e11e4c15f4803a|0f5b31ed8891a5a8|12f530384a98d893|535951687||t19397.1819834453s|517f53a615cf3573|1244|rds|local|vector|||14.07|Some schema missing model, ensemble, scenario, T_name, duration, interval, nT, X_name, Y_name, toptobottom|
 hbv_vrts|stem|52826fcdf21b7a69|0f5b31ed8891a5a8|7f7d3e0e84cf4512|-1881973028||t19217.0183245542s|6168bd1d73e2c7a9|860|rds|local|vector|||12.901||
@@ -64,7 +65,7 @@ ldas|stem|3649acacf9b0dc54|b00b0c186f6731ad|2b3b839fdb87831d|-234646300||t19397.
 livneh_daily|stem|8323d6aaffc65b53|0dcd97cf30cc3f6a|92d0a99a47ff61f9|-1013116633||t19397.6668753941s|d8e39243fc289634|24928|rds|local|vector|||6.6|Some schema missing model, ensemble, scenario|
 livneh_daily_fluxes|stem|083c8428f31afd6d|89b58f51460f437d|1a096df350702556|970150717||t19397.6669008825s|6fe354afbd414041|85996|rds|local|vector|||2.06|We do not support 4D datasetsSoilMoist. Some schema missing model, ensemble, scenario|
 livneh_monthly|stem|624e91d42fbc625a|8ff4732d644a0650|3b6bfc3195aa4136|-1372299519||t19398.2609105331s|b175f8f8c0fbb9e1|30844|rds|local|vector|||2.071|1m22mEach row in x is expected to match at most 1 row in y.36mℹ39m Row 1 of x matches multiple rows.36mℹ39m If multiple matches are expected, set multiple  all to silence this  warning.. Some schema missing model, ensemble, scenario|
-loca|stem|2fc77c39af5960a7|4ab54a39f4452ce0|3e54dcb4c8b4f98d|-1248723216||t19397.1765772498s|099b6490c814aeeb|2939|rds|local|vector|||27.98||
+loca|stem|0a2c9700f2c756d8|4ab54a39f4452ce0|e95710d137eadb71|-1248723216||t19402.9854865951s|6b4a701a4d67ca9c|2942|rds|local|vector|||19.758||
 maca|stem|6552e57d5448bd41|0de093cf7f2edf4c|2fa5be254dd2fa0c|1571193193||t19397.1772766878s|f721d451b858d786|23685|rds|local|vector|||50.142||
 maurer|stem|80982ac0a626e3ed|7870e12b96c6abb3|7e95fb779ff3bc8a|1159848334||t19397.1854041586s|d2f7d3a47a471252|2230|rds|local|vector|||14.943||
 model|stem|595ea42075521b8c|f3249b4ecf290e96|85ecb72eb7653b3f|1816327236||t19215.7841696581s|ebd1054f3f481e45|110|rds|local|vector|||0.008||
@@ -104,3 +105,4 @@ vrt_meta|function|f2e8f829a1e10e49|||||||||||||||
 vrts_meta|function|2ee40c1a176f1ee3|||||||||||||||
 wordclim_hist|stem|15bdaccdaf4d2ab4|eb9a065ef426f83c|e320cc7eb54f970e|-1613451323||t19395.9333530239s|95cd5abf6bbd7b6f|2014|rds|local|vector|||24.274|GDAL Error 1 cpl_unzOpenCurrentFile failed. GDAL Error 1 cpl_unzOpenCurrentFile failed. GDAL Error 1 cpl_unzOpenCurrentFile failed. GDAL Error 1 cpl_unzOpenCurrentFile failed. GDAL Error 1 cpl_unzOpenCurrentFile failed. GDAL Error 1 cpl_unzOpenCurrentFile failed. GDAL Error 1 cpl_unzOpenCurrentFile failed. GDAL Error 1 cpl_unzOpenCurrentFile failed. GDAL Error 1 cpl_unzOpenCurrentFile failed. GDAL Error 1 cpl_unzOpenCurrentFile failed. GDAL Error 1 cpl_unzOpenCurrentFile failed. Some schema missing model, ensemble, scenario, T_name, X_name, Y_name|
 worldclim_hist|stem|15bdaccdaf4d2ab4|eb9a065ef426f83c|60bad099539b046f|2125491850||t19397.237390593s|95cd5abf6bbd7b6f|2014|rds|local|vector|||25.429|GDAL Error 1 cpl_unzOpenCurrentFile failed. GDAL Error 1 cpl_unzOpenCurrentFile failed. GDAL Error 1 cpl_unzOpenCurrentFile failed. GDAL Error 1 cpl_unzOpenCurrentFile failed. GDAL Error 1 cpl_unzOpenCurrentFile failed. GDAL Error 1 cpl_unzOpenCurrentFile failed. GDAL Error 1 cpl_unzOpenCurrentFile failed. GDAL Error 1 cpl_unzOpenCurrentFile failed. GDAL Error 1 cpl_unzOpenCurrentFile failed. GDAL Error 1 cpl_unzOpenCurrentFile failed. GDAL Error 1 cpl_unzOpenCurrentFile failed. Some schema missing model, ensemble, scenario, T_name, X_name, Y_name|
+WUS_HSP|stem|c89357ef36b61f93|4d4dd42e03a1b999|f5fe265283308e97|-904637496||t19402.985257474s|62e35ee46647f820|1802|rds|local|vector|||6.985|Some schema missing ensemble|

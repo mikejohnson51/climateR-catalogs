@@ -3,8 +3,8 @@ library(targets)
 source("R/utils.R")
 source("R/targets.R")
 
-pacman::p_load("terra", "sf", "rvest", "glue", "dplyr", "jsonlite",
-               "logger", "rvest", "opendap.catalog","RNetCDF", "data.table", "tidyr")
+# pacman::p_load("terra", "sf", "rvest", "glue", "dplyr", "jsonlite",
+#                "logger", "rvest", "opendap.catalog","RNetCDF", "data.table", "tidyr")
 tar_option_set(packages = c("terra", "sf", "rvest", "glue", "dplyr",
                             "jsonlite", "logger", "rvest", "opendap.catalog",
                             "RNetCDF", "data.table", "tidyr"))
@@ -40,6 +40,7 @@ list(
   tar_target(livneh_daily,        get_livneh()),
   tar_target(livneh_monthly,      get_livneh_monthly()),
   tar_target(livneh_daily_fluxes, get_livneh_fluxes()),
+  tar_target(WUS_HSP,             get_WUS_HSP()),
 
   # Export Catalog to catalog.json in doc directory
   tar_target(cat, export_catalog(list(maca,
@@ -70,7 +71,8 @@ list(
                                       topowx,
                                       livneh_daily,
                                       livneh_monthly,
-                                      livneh_daily_fluxes),
+                                      livneh_daily_fluxes,
+                                      WUS_HSP),
                                  "docs/catalog"),
              format = "file")
 
