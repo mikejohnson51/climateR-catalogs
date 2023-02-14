@@ -19,14 +19,24 @@ get_maca = function(id = "maca"){
 
 # Data Source 2 -----------------------------------------------------------
 get_gridmet <- function(id = "gridmet"){
-  read_tds("http://thredds.northwestknowledge.net:8080/thredds/reacch_climate_MET_aggregated_catalog.html", id) %>%
+  o = read_tds("http://thredds.northwestknowledge.net:8080/thredds/reacch_climate_MET_aggregated_catalog.html", id) %>%
     separate_wider_delim(link,
                   names = c(NA, NA, "variable", NA, NA, NA),
-                  delim = "_") |>
-  opendap.catalog::dap_meta() |>
-  mutate(tiled = "", type = "opendap", crs = proj, description = long_name) %>%
-  rectify_schema(schema)
+                  delim = "_")
 
+  out = list()
+
+  for(i in 1:nrow(o)){
+    out[[i]] = tryCatch({
+      opendap.catalog::read_dap_file(o$URL[i], id = o$variable[i], varmeta = TRUE)
+    }, error = function(e) { NULL})
+  }
+
+  bind_rows(out) %>%
+    rename(variable = id, description = long_name, crs = proj) %>%
+    left_join(select(o, -URL), by = 'variable') %>%
+    mutate(tiled = "", type = "opendap") %>%
+    rectify_schema(schema)
 
 }
 
@@ -57,13 +67,50 @@ get_terraclim_normals = function(id = "terraclim_normals"){
 }
 
 # Data Source 5 -----------------------------------------------------------
-get_vic = function(id = "vic"){
-  read_tds(URL = "https://www.reacchpna.org/thredds/nw.csc.hydrology-vic.aggregated.html", id) %>%
-    separate_wider_delim(link, names = c(NA, "variable", "model", "ensemble", "scenario", NA, NA, NA, NA, NA, NA), delim = "_", too_few = "align_end") %>%
-    opendap.catalog::dap_meta() %>%
-    mutate(tiled = "", type = "opendap", crs = proj, description = long_name) %>%
-    rectify_schema(schema)
-}
+# get_vic = function(id = "vic"){
+#   d = read_tds(URL = "https://www.reacchpna.org/thredds/nw.csc.hydrology-vic.aggregated.html", id) %>%
+#     separate_wider_delim(link,
+#                          names = c(NA, "variable", "model", "ensemble", "scenario",
+#                                    NA, NA, NA, NA, NA, NA),
+#                          delim = "_",
+#                          too_few = "align_start")
+#
+#   d2 = group_by(d, variable, scenario) %>%
+#     slice(1) %>%
+#     select(URL, variable, scenario)
+#
+#   d2$URL[4]
+#   out = list()
+#
+#   for(i in 1:nrow(d2)){
+#     out[[i]] = tryCatch({
+#       opendap.catalog::read_dap_file(d2$URL[i], id = d2$variable[i], varmeta = TRUE)
+#     }, error = function(e) { NULL})
+#   }
+#
+#   bind_rows(out)
+#
+#   d2 = group_by(d, scenario) %>%
+#     slice(1) %>%
+#     select(URL, scenario)
+#
+#   out2 = list()
+#   for(i in 1:nrow(d2)){
+#     out[[i]] = tryCatch({
+#       opendap.catalog::read_dap_file(d2$URL[i], id = d2$variable[i], varmeta = TRUE)
+#     }, error = function(e) { NULL})
+#   }
+#
+#   out = list()
+#
+#
+#   bind_rows(out) %>%
+#     rename(variable = id, description = long_name, crs = proj) %>%
+#     left_join(select(o, -URL), by = 'variable') %>%
+#     mutate(tiled = "", type = "opendap") %>%
+#     rectify_schema(schema)
+#
+# }
 
 # Data Source 6 -----------------------------------------------------------
 get_daymet4 = function(id = "daymet4"){
@@ -730,7 +777,7 @@ get_livneh_monthly = function(id = "Livneh_monthly"){
   opendap.catalog::read_dap_file(df$URL[2], varname = NULL, id = id) %>%
     mutate(URL = NULL) %>%
     right_join(df, by = "id") %>%
-    mutate(duration = NULL, nT = NULL, description = long_name, variable = varname, crs = proj) %>%
+    mutate(duration = NULL, interval = "1 month", nT = NULL, description = long_name, variable = varname, crs = proj) %>%
     left_join(tmp, by = "ym") %>%
     rectify_schema(schema)
 }
@@ -807,6 +854,10 @@ get_prism_daily = function(){
                 id = 'prism_daily') %>%
     mutate(duration = '1981-01-01/..', variable = varname) %>%
     dap_meta() %>%
-    mutate(URL =   gsub("20211010", "{YYYYMMDD}", gsub("/2021\\/", "/{YYYY}/", URL)), tiled = "T")
+    mutate(crs = proj, description = long_name, type = "opendap") %>%
+    mutate(URL =   gsub("20211010", "{YYYYMMDD}", gsub("/2021\\/", "/{YYYY}/", URL)),
+           tiled = "T",
+           interval = "1 day") %>%
+    rectify_schema(schema)
 }
 
