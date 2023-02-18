@@ -874,3 +874,75 @@ opendap.catalog::read_dap_file("https://cida.usgs.gov/thredds/dodsC/WUS_HSP/SD_A
   rectify_schema(schema)
 }
 
+
+# Data Source 28 ----------------------------------------------------------
+
+get_loca_hydro = function(){
+  url <- "ftp://gdo-dcp.ucllnl.org/pub/dcp/archive/cmip5/loca_hydro/LOCA_VIC_dpierce_2017-02-28/"
+  result <- getURL(url,verbose=TRUE,ftp.use.epsv=TRUE, dirlistonly = TRUE)
+
+  models = strsplit(result, "\\n")[[1]]
+
+  url2 = paste0(url, models[1], "/")
+  result2 <- getURL(url2,verbose=TRUE,ftp.use.epsv=TRUE, dirlistonly = TRUE)
+  scenarios = strsplit(result2, "\\n")[[1]]
+
+  url3 = paste0(url2, "/", scenarios[1], "/")
+  result3 <- getURL(url3,verbose=TRUE,ftp.use.epsv=TRUE, dirlistonly = TRUE)
+  tmp = strsplit(strsplit(result3, "\\n")[[1]], "\\.")
+  meta = data.frame(do.call(rbind, tmp)) %>%
+    filter(X2 != "nc")
+
+  g1 = expand.grid(models, scenarios[1], unique(meta$X1), unique(readr::parse_number(meta$X2)))
+
+  url3 = paste0(url2, "/", scenarios[2], "/")
+  result4 <- getURL(url3,verbose=TRUE,ftp.use.epsv=TRUE, dirlistonly = TRUE)
+  tmp = strsplit(strsplit(result4, "\\n")[[1]], "\\.")
+  meta = data.frame(do.call(rbind, tmp)) %>%
+    filter(X2 != "nc")
+
+  g2 = expand.grid(models, scenarios[2:3], unique(meta$X1), unique(readr::parse_number(meta$X2)))
+
+  g3 = data.frame(rbind(g1, g2)) %>%
+    distinct() %>%
+    filter(complete.cases(.))
+
+  names(g3) = c("model", "scenario", "varname", "year")
+
+  x = group_by(g3, model, scenario, varname) %>%
+    mutate(interval = "1 day", duration = paste0(min(year), "-01-01/", max(year), "-12-31"),
+           id = "loca_hydrology",
+           URL = paste0(url, model,"/", scenario, "/", varname, ".{year}.v0.nc"),
+           scenario = gsub(".netcdf", "", gsub("vic_output.", "", scenario)),
+           type = "ftp", variable = varname, description = varname, toptobottom = FALSE, tiled = "", T_name = "Time",
+           X_name = "Lon", Y_name = "Lat", nT = 365) %>%
+    slice(1) %>%
+    ungroup()
+
+
+  x2 = group_by(x, varname) %>%
+    slice(1) %>%
+    mutate(URL = glue(URL)) %>%
+    ungroup() %>%
+    select(URL, varname)
+
+
+  for(i in 1:nrow(x2)){
+    r = rast(x2$URL[i], lyrs = 1)
+    x2$units[i] = units(r)
+    x2$crs[i] = sf::st_crs(r)$proj4string
+    x2$X1[i] = xmin(r)
+    x2$Xn[i] = xmax(r)
+    x2$Y1[i] = ymin(r)
+    x2$Yn[i] = ymax(r)
+    x2$resX[i] = res(r)[1]
+    x2$resY[i] = res(r)[2]
+    x2$ncols[i] = ncol(r)
+    x2$nrows[i] = nrow(r)
+    message(i , " of ", nrow(x2))
+  }
+
+  left_join(x, select(x2, - URL), by = 'varname') %>%
+    rectify_schema(schema)
+}
+

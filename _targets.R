@@ -7,7 +7,7 @@ source("R/targets.R")
 #                "logger", "rvest", "opendap.catalog","RNetCDF", "data.table", "tidyr")
 tar_option_set(packages = c("terra", "sf", "rvest", "glue", "dplyr",
                             "jsonlite", "logger", "rvest", "opendap.catalog",
-                            "RNetCDF", "data.table", "tidyr"))
+                            "RNetCDF", "data.table", "tidyr", "RCurl"))
 
 
 list(
@@ -41,6 +41,7 @@ list(
   tar_target(livneh_monthly,      get_livneh_monthly()),
   tar_target(livneh_daily_fluxes, get_livneh_fluxes()),
   tar_target(WUS_HSP,             get_WUS_HSP()),
+  tar_target(loca_hydro,          get_loca_hydro()),
 
   # Export Catalog to catalog.json in doc directory
   tar_target(cat, export_catalog(list(maca,
@@ -72,7 +73,8 @@ list(
                                       livneh_daily,
                                       livneh_monthly,
                                       livneh_daily_fluxes,
-                                      WUS_HSP),
+                                      WUS_HSP,
+                                      loca_hydro),
                                  "docs/catalog"),
              format = "file")
 
