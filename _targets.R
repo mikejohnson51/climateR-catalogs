@@ -3,10 +3,10 @@ library(targets)
 source("R/utils.R")
 source("R/targets.R")
 
-# pacman::p_load("terra", "sf", "rvest", "glue", "dplyr", "jsonlite",
-#                "logger", "rvest", "opendap.catalog","RNetCDF", "data.table", "tidyr")
+pacman::p_load("terra", "sf", "rvest", "glue", "dplyr", "jsonlite",
+               "logger", "rvest", "climateR","RNetCDF", "data.table", "tidyr")
 tar_option_set(packages = c("terra", "sf", "rvest", "glue", "dplyr",
-                            "jsonlite", "logger", "rvest", "opendap.catalog",
+                            "jsonlite", "logger", "rvest", "climateR",
                             "RNetCDF", "data.table", "tidyr", "RCurl"))
 
 

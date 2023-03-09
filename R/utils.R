@@ -1,7 +1,8 @@
 schema = c("id", "asset", "URL", "type", "varname", "variable", "description", "units",
            "model", "ensemble", "scenario",
            "T_name","duration", "interval", "nT",
-           "X_name", "Y_name", "X1", "Xn", "Y1", "Yn", "resX", "resY", "ncols", "nrows", "crs", "toptobottom", "tiled")
+           "X_name", "Y_name", "X1", "Xn", "Y1", "Yn", "resX", "resY", "ncols", "nrows",
+           "crs", "toptobottom", "tiled", "dim_order")
 
 rectify_schema = function(d, schema){
 

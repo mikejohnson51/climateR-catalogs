@@ -571,16 +571,15 @@ get_erdap = function(url = "https://irishmarineinstitute.github.io/awesome-erdda
 
 # Data Source 24 -----------------------------------------------------------
 get_modis = function(URL = 'https://opendap.cr.usgs.gov/opendap/hyrax/') {
-  modis_hyrax =  html_nodes(read_html(URL), "a")
 
-  modis_hyrax = data.frame(link = html_attr(modis_hyrax, "href")) |>
+  modis_hyrax = data.frame(link = html_attr(html_nodes(read_html(URL), "a"), "href")) |>
     mutate(id = dirname(link),
            link = paste0(URL,
                          gsub('contents.html', "", link))) |>
     filter(!grepl("http|4913|opendap|PROTOTYPE", id)) |>
     filter(id != ".") |>
-    filter(grepl("MOD", id))
-
+    filter(grepl("MOD", id)) %>%
+    filter(id == "MOD14A1.006")
 
   modis_data = list()
 
@@ -635,7 +634,7 @@ get_modis = function(URL = 'https://opendap.cr.usgs.gov/opendap/hyrax/') {
 
       merge(raw,
             data.frame(
-              opendap.catalog:::.resource_time(nc, raw$T_name[1]),
+              climateR:::.resource_time(nc, raw$T_name[1]),
               asset = tmp$id[x]
             ) ,
             by = 'asset')
@@ -914,7 +913,7 @@ get_loca_hydro = function(){
            id = "loca_hydrology",
            URL = paste0(url, model,"/", scenario, "/", varname, ".{year}.v0.nc"),
            scenario = gsub(".netcdf", "", gsub("vic_output.", "", scenario)),
-           type = "ftp", variable = varname, description = varname, toptobottom = FALSE, tiled = "", T_name = "Time",
+           type = "ftp", variable = varname, description = varname, toptobottom = FALSE, tiled = "T", T_name = "Time",
            X_name = "Lon", Y_name = "Lat", nT = 365) %>%
     slice(1) %>%
     ungroup()

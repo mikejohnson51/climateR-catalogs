@@ -7,15 +7,12 @@
 <!-- badges: end -->
 
 The goal of `climateR-catalogs` is to “automate” a collection of data
-catalogs usable with `terra`, `climateR`, `gdalio`, `geoknife`, `stars`,
-etc.
+catalogs usable with R(e.g. `terra`, `climateR`, `gdalio`, `geoknife`,
+`stars`) and in Python (e.g. `gdptools`)
 
-The catalog(s) will be built using `targets` in this repo, and deployed
-as JSON/parquet/rds artifacts at
+The catalog(s) are built using `targets` in this repo, and deployed as
+JSON/parquet/rds artifacts at
 “<https://mikejohnson51.github.io/climateR-catalogs/catalog>.{ext}”.
-
-Hopefully a more authoritative home at USGS or NOAA can be found to host
-these.
 
 ## Scope
 
@@ -41,7 +38,7 @@ To align the 4 categories of data a WIP schema can be found
 
 ### Catalog to date:
 
-The catalog looks like this on 2023-02-09 reading local version (same as
+The catalog looks like this on 2023-03-08 reading local version (same as
 pushed one found in `docs`)
 
 ``` r
@@ -49,11 +46,11 @@ cat =  read_parquet("docs/catalog.parquet")
 
 # Unique datasets
 nrow(cat)
-#> [1] 107028
+#> [1] 107857
 
 # Unique products
 length(unique(cat$asset))
-#> [1] 6456
+#> [1] 4653
 ```
 
 ### Examples
@@ -61,7 +58,7 @@ length(unique(cat$asset))
 Here is a minimal example with the base information added:
 
 ``` r
-pacman::p_load(dplyr, opendap.catalog, AOI, terra)
+pacman::p_load(dplyr, climateR, AOI, terra)
 
 nlcd = filter(cat, id == "NLCD", asset == '2019 Land Cover L48')
 
@@ -99,6 +96,7 @@ t(nlcd)
 
 ``` r
 (output   = dap(catalog = nlcd,  AOI = aoi_get("Fort Collins")))
+#> $`2019 Land Cover L48`
 #> class       : SpatRaster 
 #> dimensions  : 667, 548, 1  (nrow, ncol, nlyr)
 #> resolution  : 30, 30  (x, y)
@@ -110,11 +108,9 @@ t(nlcd)
 #> name        :        NLCD Land Cover Class 
 #> min value   :                   Open Water 
 #> max value   : Emergent Herbaceous Wetlands
-
-plot(output)
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
 
 This is still a little clunky but you can pass multi-row “catalog”
 data.frames straight to dap! For example say you want soil sand content,
@@ -123,15 +119,12 @@ land cover and elevation for the city of Fort Collins:
 ``` r
 multilayer = filter(cat,  asset %in% c("2019 Land Cover L48", "30m CONUS DEM", "sand_mean_0_5"))
 
-output  = lapply(1:nrow(multilayer), function(x){   dap(catalog = multilayer[x,], AOI = aoi_get("Fort Collins")) })
-
-par(mfrow = c(2,2))
-for(i in 1:3){
-  plot(output[[i]], main = multilayer$product[i])  
-}  
+output  = sapply(1:nrow(multilayer), function(x){   
+  dap(catalog = multilayer[x,], AOI = aoi_get("Fort Collins")) 
+})
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
 
 ### Hitting OpenDap resources!
 
@@ -190,11 +183,9 @@ data = dap(URL  = dap_resource$URL,
 #> time:        2000-09-30 12:00:00 to 2000-10-03 12:00:00
 #> ==================================================
 #> values: 12,096 (vars*X*Y*T)
-
-plot(data[[1]])
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
 
 ### Global
 
@@ -202,8 +193,6 @@ plot(data[[1]])
 nz_soil = filter(cat, id == "ISRIC Soil Grids", variable == 'silt_0-5cm_mean')
 
 data = dap(URL  = nz_soil$URL,  AOI = aoi_get(country  = "New Zealand"))
-
-plot(data[[1]])
 ```
 
-![](README_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+![](README_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->

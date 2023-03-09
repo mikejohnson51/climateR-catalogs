@@ -11,6 +11,7 @@ knitr::opts_chunk$set(
 )
 
 library(dplyr); library(targets);library(arrow)
+
 tar_visnetwork() %>% 
   visNetwork::visSave("docs/index.html")
 
@@ -21,11 +22,9 @@ tar_visnetwork() %>%
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of `climateR-catalogs` is to "automate" a collection of data catalogs usable with `terra`, `climateR`, `gdalio`, `geoknife`, `stars`, etc.
+The goal of `climateR-catalogs` is to "automate" a collection of data catalogs usable with R(e.g. `terra`, `climateR`, `gdalio`, `geoknife`, `stars`) and in Python (e.g. `gdptools`)
 
-The catalog(s) will be built using `targets` in this repo, and deployed as JSON/parquet/rds artifacts at "https://mikejohnson51.github.io/climateR-catalogs/catalog.{ext}". 
-
-Hopefully a more authoritative home at USGS or NOAA can be found to host these.
+The catalog(s) are built using `targets` in this repo, and deployed as JSON/parquet/rds artifacts at "https://mikejohnson51.github.io/climateR-catalogs/catalog.{ext}". 
 
 ## Scope
 
@@ -65,7 +64,7 @@ length(unique(cat$asset))
 Here is a minimal example with the base information added:
 
 ```{r cars}
-pacman::p_load(dplyr, opendap.catalog, AOI, terra)
+pacman::p_load(dplyr, climateR, AOI, terra)
 
 nlcd = filter(cat, id == "NLCD", asset == '2019 Land Cover L48')
 
@@ -74,8 +73,10 @@ t(nlcd)
 
 ```{r}
 (output   = dap(catalog = nlcd,  AOI = aoi_get("Fort Collins")))
+```
 
-plot(output)
+```{r, echo = FALSE}
+plot(output[[1]])
 ```
 
 This is still a little clunky but you can pass multi-row "catalog" data.frames straight to 
@@ -84,11 +85,15 @@ dap! For example say you want soil sand content, land cover and elevation for th
 ```{r}
 multilayer = filter(cat,  asset %in% c("2019 Land Cover L48", "30m CONUS DEM", "sand_mean_0_5"))
 
-output  = lapply(1:nrow(multilayer), function(x){   dap(catalog = multilayer[x,], AOI = aoi_get("Fort Collins")) })
+output  = sapply(1:nrow(multilayer), function(x){   
+  dap(catalog = multilayer[x,], AOI = aoi_get("Fort Collins")) 
+})
+```
 
+```{r, echo = FALSE}
 par(mfrow = c(2,2))
 for(i in 1:3){
-  plot(output[[i]], main = multilayer$product[i])  
+  plot(output[[i]], main = multilayer$asset[i])  
 }  
 ```
 
@@ -109,7 +114,9 @@ data = dap(URL  = dap_resource$URL,
            varname = dap_resource$varname,
            startDate = "2000-10-01",
            endDate   = "2000-10-04")
+```
 
+```{r, echo = FALSE}
 plot(data[[1]])
 ```
 
@@ -119,6 +126,8 @@ plot(data[[1]])
 nz_soil = filter(cat, id == "ISRIC Soil Grids", variable == 'silt_0-5cm_mean')
 
 data = dap(URL  = nz_soil$URL,  AOI = aoi_get(country  = "New Zealand"))
+```
 
+```{r, echo = FALSE}
 plot(data[[1]])
 ```
