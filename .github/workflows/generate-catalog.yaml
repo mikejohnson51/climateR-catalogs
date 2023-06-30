@@ -36,7 +36,7 @@ on:
       - 'data-raw/*'
   schedule:
     # Run this workflow at 00:00 UTC every Wednesday
-    - cron: '0 0 * * 3'
+    - cron: '0 0 1 * *'
 
 name: targets
 
@@ -108,7 +108,7 @@ jobs:
       # Check if a previous run exists, only if
       # this workflow is run out-of-schedule.
       - name: Check if previous runs exists
-        if: github.event.schedule != '0 0 * * 3'
+        if: github.event.schedule != '0 0 1 * *
         id: runs-exist
         run: git ls-remote --exit-code --heads origin targets-runs
         continue-on-error: true
