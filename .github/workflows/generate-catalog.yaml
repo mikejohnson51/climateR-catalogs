@@ -34,6 +34,9 @@ on:
       - 'DESCRIPTION'
       - 'R/**.R'
       - 'data-raw/*'
+  schedule:
+    # Run this workflow at 00:00 UTC every Wednesday
+    - cron: '0 0 * * 3'
 
 name: targets
 
@@ -102,7 +105,10 @@ jobs:
       #     if (!requireNamespace("pak", quietly = TRUE)) install.packages("pak")
       #     pak::local_install_dev_deps()
 
+      # Check if a previous run exists, only if
+      # this workflow is run out-of-schedule.
       - name: Check if previous runs exists
+        if: github.event.schedule != '0 0 * * 3'
         id: runs-exist
         run: git ls-remote --exit-code --heads origin targets-runs
         continue-on-error: true
