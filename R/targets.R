@@ -351,14 +351,14 @@ get_hbv = function(base = '/vsicurl/https://github.com/atsyplenkov/HBVr/releases
 
   v = c('beta', 'Shape coefficient of recharge function', NA,
         'FC', 'Maximum soil moisture storage', 'mm',
-        'K0', 'Recession coefficient of upper zone', 'day−1',
-        'K1', 'Recession coefficient of upper zone', 'day−1',
-        'K2', 'Recession coefficient of lower zone', 'day−1',
+        'K0', 'Recession coefficient of upper zone', 'day-1',
+        'K1', 'Recession coefficient of upper zone', 'day-1',
+        'K2', 'Recession coefficient of lower zone', 'day-1',
         'LP', 'Soil moisture value above which actual evaporation reaches potential evaporation', NA,
-        'PERC', 'Maximum percolation to lower zone', 'mm day−1',
+        'PERC', 'Maximum percolation to lower zone', 'mm day-1',
         'UZL', 'Threshold parameter for extra outflow from upper zone', 'mm',
         'TT', 'Threshold temperature', 'C',
-        'CFMAX', 'Degree‐day factor', 'mm °−11 day−1)',
+        'CFMAX', 'Degree-day factor', 'mm \u00B0-11 day-1)',
         'CFR',  'Refreezing coefficient', NA,
         'CWH', 'Water holding capacity', NA) %>%
     matrix(ncol = 3, byrow = TRUE) %>%
