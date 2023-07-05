@@ -24,8 +24,8 @@
     ) |>
     dplyr::bind_rows() |>
     arrow::as_arrow_table() |>
-    dplyr::rename(variable = .data$id) |>
-    dplyr::left_join(dplyr::select(.tbl, -.data$URL), by = "variable") |>
+    dplyr::rename(variable = id) |>
+    dplyr::left_join(dplyr::select(.tbl, -URL), by = "variable") |>
     dplyr::mutate(tiled = "", type = "opendap") |>
     dplyr::compute()
 }

@@ -12,6 +12,7 @@ Imports:
     rvest,
     jsonlite,
     logger,
+    ncmeta,
     pacman,
     RNetCDF,
     data.table,

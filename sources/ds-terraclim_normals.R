@@ -16,17 +16,17 @@
         dplyr::mutate(
             URL = paste0("http://thredds.northwestknowledge.net:8080",
                          "/thredds/dodsC/TERRACLIMATE_ALL/summaries/",
-                         basename(.data$link)),
-            link2 = gsub(".nc", "", basename(.data$link))
+                         basename(link)),
+            link2 = gsub(".nc", "", basename(link))
         ) |>
-        dplyr::filter(.data$link2 != "summaries") |>
+        dplyr::filter(link2 != "summaries") |>
         tidyr::separate_wider_delim(
             cols  = "link2",
             names = c("scenario", "variable"),
             delim = "_"
         ) |>
-        dplyr::mutate(scenario = gsub("TerraClimate", "", .data$scenario)) |>
-        dplyr::filter(!is.na(.data$variable)) |>
+        dplyr::mutate(scenario = gsub("TerraClimate", "", scenario)) |>
+        dplyr::filter(!is.na(variable)) |>
         climateR::dap_meta() |>
         dplyr::mutate(
             tiled    = "",

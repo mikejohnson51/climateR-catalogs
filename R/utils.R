@@ -70,11 +70,11 @@ fix_schema <- function(.tbl) {
   .tbl <- dplyr::select(.tbl, dplyr::all_of(schema_names)) |>
           dplyr::mutate(dplyr::across(
               .cols = c(
-                   .data$id,
-                   .data$type,
-                   .data$variable,
-                   .data$tiled,
-                   .data$dim_order
+                   id,
+                   type,
+                   variable,
+                   tiled,
+                   dim_order
                ),
               .fns = as.factor
           )) |>
