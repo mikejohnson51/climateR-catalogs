@@ -1,15 +1,93 @@
-schema = c("id", "asset", "URL", "type",
-           "varname", "variable",
-           "description", "units",
+utils::globalVariables(".data")
+
+#' @export
+schema = c("id", "asset", "URL", "type", "varname", "variable", "description", "units",
            "model", "ensemble", "scenario",
            "T_name","duration", "interval", "nT",
            "X_name", "Y_name", "X1", "Xn", "Y1", "Yn", "resX", "resY", "ncols", "nrows",
            "crs", "toptobottom", "tiled", "dim_order")
 
+#' @export
+arrow_schema <- arrow::schema(
+  id          = arrow::dictionary(arrow::int32(), arrow::string()),
+  asset       = arrow::string(),
+  URL         = arrow::string(),
+  type        = arrow::dictionary(arrow::int8(), arrow::string()),
+  varname     = arrow::string(),
+  variable    = arrow::dictionary(arrow::int32(), arrow::string()),
+  description = arrow::string(),
+  units       = arrow::string(),
+  model       = arrow::string(),
+  ensemble    = arrow::string(),
+  scenario    = arrow::string(),
+  T_name      = arrow::string(),
+  duration    = arrow::string(),
+  interval    = arrow::string(),
+  nT          = arrow::uint32(),
+  X_name      = arrow::string(),
+  Y_name      = arrow::string(),
+  X1          = arrow::float64(),
+  Xn          = arrow::float64(),
+  Y1          = arrow::float64(),
+  Yn          = arrow::float64(),
+  resX        = arrow::float64(),
+  resY        = arrow::float64(),
+  ncols       = arrow::uint64(),
+  nrows       = arrow::uint64(),
+  crs         = arrow::string(),
+  toptobottom = arrow::bool(),
+  tiled       = arrow::dictionary(arrow::int8(), arrow::string()),
+  dim_order   = arrow::dictionary(arrow::int8(), arrow::string())
+)
+
+#' @export
+fix_schema <- function(.tbl) {
+  .tbl <- dplyr::as_tibble(.tbl)
+
+  schema_names <- names(arrow_schema)
+  data_names   <- names(.tbl)
+  diff_names   <- setdiff(schema_names, data_names)
+
+  # Ensure schema matches specified arrow schema
+  if (length(diff_names) > 0) {
+    .tbl[, diff_names] <- NA
+  }
+
+  # Ensure `asset` is not all NA
+  if (all(is.na(.tbl$asset))) {
+    .tbl$asset <- tools::file_path_sans_ext(basename(.tbl$URL))
+  }
+
+  # Get missing columns, aka cols with values NA
+  missing_cols <- names(.tbl)[which(colSums(is.na(.tbl)) == nrow(.tbl))]
+  if (length(missing_cols) > 0) {
+      warning("Some schema missing: ",
+              paste(missing_cols, collapse = ", "),
+              call. = FALSE)
+  }
+
+  # Fix factor columns
+  .tbl <- dplyr::select(.tbl, dplyr::all_of(schema_names)) |>
+          dplyr::mutate(dplyr::across(
+              .cols = c(
+                   .data$id,
+                   .data$type,
+                   .data$variable,
+                   .data$tiled,
+                   .data$dim_order
+               ),
+              .fns = as.factor
+          )) |>
+          arrow::as_arrow_table()
+
+  .tbl$cast(arrow_schema)
+}
+
+#' @export
 rectify_schema = function(d, schema){
 
   if(length(setdiff(schema, names(d))) > 0){
-    d2 = setDT(d)[, setdiff(schema, names(d)) := NA]
+    d2 = data.table::setDT(d)[, setdiff(schema, names(d)) := NA]
   } else {
     d2 = d
   }
@@ -26,6 +104,7 @@ rectify_schema = function(d, schema){
   select(d2, dplyr::all_of(schema))
 }
 
+#' @export
 read_tds <- function(URL, id, append = ".nc") {
   dat <- read_html(URL)
   dat <- html_nodes(dat, "a")
