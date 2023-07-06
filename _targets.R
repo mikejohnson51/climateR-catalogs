@@ -6,7 +6,9 @@ devtools::load_all() # move this to packages once installable
 # Dynamically load data sources
 sources <- new.env()
 lapply(
-    list.files(path = "sources/", pattern = "ds-*", full.names = TRUE),
+    list.files(path = here::here("sources/"),
+               pattern = "ds-*",
+               full.names = TRUE),
     FUN = source,
     local = sources
 )
@@ -126,4 +128,3 @@ list(
 
     outputs_workflow
 )
-# -----------------------------------------------------------------------------
