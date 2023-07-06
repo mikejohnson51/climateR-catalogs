@@ -84,32 +84,11 @@ fix_schema <- function(.tbl) {
 }
 
 #' @export
-rectify_schema = function(d, schema){
-
-  if(length(setdiff(schema, names(d))) > 0){
-    d2 = data.table::setDT(d)[, setdiff(schema, names(d)) := NA]
-  } else {
-    d2 = d
-  }
-
-  if(sum(is.na(d2$asset)) == nrow(d2)){
-    d2$asset = tools::file_path_sans_ext(basename(d2$URL))
-  }
-
-  b = names(d2)[which(colSums(is.na(d2)) == nrow(d2))]
-  if(length(b) > 0){
-    warning('Some schema missing: ', paste(b, collapse = ", "), call. = FALSE)
-  }
-
-  select(d2, dplyr::all_of(schema))
-}
-
-#' @export
 read_tds <- function(URL, id, append = ".nc") {
-  dat <- read_html(URL)
-  dat <- html_nodes(dat, "a")
+  dat <- rvest::read_html(URL)
+  dat <- rvest::html_nodes(dat, "a")
 
-  dat <- data.frame(link = html_attr(dat, "href"))
+  dat <- data.frame(link = rvest::html_attr(dat, "href"))
   dat$id = id
 
   dat$link <- gsub(".*=", "", dat$link)
