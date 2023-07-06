@@ -93,22 +93,14 @@ jobs:
       - name: Setup R enviroment
         uses: r-lib/actions/setup-r-dependencies@v2
 
-      # - name: Cache packages
-      #   uses: actions/cache@v3
-      #   with:
-      #     path: ${{ env.PAK_PATHS_ROOT }}
-      #     key: ${{ runner.os }}-pak-${{ hashFiles('**/pkg.lock') }}
-      #     restore-keys: ${{ runner.os }}-pak-
-      # - name: Restore packages
-      #   shell: Rscript {0}
-      #   run: |
-      #     if (!requireNamespace("pak", quietly = TRUE)) install.packages("pak")
-      #     pak::local_install_dev_deps()
+      - name: Install climateR.catalogs
+        shell: Rscript {0}
+        run: pak::pkg_install("local::.")
 
       # Check if a previous run exists, only if
       # this workflow is run out-of-schedule.
       - name: Check if previous runs exists
-        if: github.event.schedule != '0 0 1 * *
+        if: github.event.schedule != '0 0 1 * *'
         id: runs-exist
         run: git ls-remote --exit-code --heads origin targets-runs
         continue-on-error: true

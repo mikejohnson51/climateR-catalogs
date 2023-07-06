@@ -1,7 +1,8 @@
 library(targets)
 
 # Loads climateR.catalogs
-devtools::load_all() # move this to packages once installable
+# devtools::load_all()
+library(climateR.catalogs)
 
 # Dynamically load data sources
 sources <- new.env()
@@ -14,8 +15,8 @@ lapply(
 )
 
 targets::tar_option_set(
-    packages = c("terra", "sf", "rvest", "glue", "dplyr",
-                 "jsonlite", "logger", "rvest", "climateR",
+    packages = c("climateR.catalogs", "terra", "sf", "rvest", "glue",
+                 "dplyr", "jsonlite", "logger", "rvest", "climateR",
                  "RNetCDF", "data.table", "tidyr", "RCurl",
                  "arrow")
 )

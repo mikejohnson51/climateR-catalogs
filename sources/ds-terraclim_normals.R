@@ -1,13 +1,13 @@
 #' @keywords internal
 .pull_terraclim_normals <- function(...) {
-    climateR.catalogs::read_tds(
+    arrow::as_arrow_table(climateR.catalogs::read_tds(
         paste0(
             "http://thredds.northwestknowledge.net:8080",
             "/thredds/catalog/TERRACLIMATE_ALL/summaries/catalog.html"
         ),
         "terraclim_normals",
         ""
-    )
+    ))
 }
 
 #' @keywords internal
@@ -32,7 +32,8 @@
             tiled    = "",
             interval = "1 month",
             type     = "opendap"
-        )
+        ) |>
+        arrow::as_arrow_table()
 }
 
 #' TerraClimate Normals Data Source

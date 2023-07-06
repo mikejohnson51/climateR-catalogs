@@ -76,7 +76,9 @@ data_source <- R6::R6Class("data_source",
         #' @param ... (`any`)\cr
         #'  User-defined parameters that may be used.
         pull = function(...) {
-            private$.data <- arrow::as_arrow_table(private$.pull(...))
+            private$.data <- private$.pull(...) |>
+                             arrow::as_arrow_table()
+
             invisible(self)
         },
 
@@ -86,8 +88,11 @@ data_source <- R6::R6Class("data_source",
         #' @param ... (`any`)\cr
         #'  User-defined parameters that may be used.
         tidy = function(...) {
-            private$.data <- private$.tidy(private$.data, ...)
+            private$.data <- private$.tidy(private$.data, ...) |>
+                             arrow::as_arrow_table()
+
             private$.finished <- TRUE
+
             invisible(self)
         },
 

@@ -13,21 +13,21 @@
 
 #' @keywords internal
 .tidy_gridmet <- function(.tbl, ...) {
-    dplyr::collect(.tbl) |>
-    dplyr::rowwise() |>
-    dplyr::group_map(~ tryCatch({
-        climateR::read_dap_file(
-            URL     = .x$URL[1],
-            id      = .x$variable[1],
-            varmeta = TRUE
-        )}, error = function(condition) NULL)
-    ) |>
-    dplyr::bind_rows() |>
-    arrow::as_arrow_table() |>
-    dplyr::rename(variable = id) |>
-    dplyr::left_join(dplyr::select(.tbl, -URL), by = "variable") |>
-    dplyr::mutate(tiled = "", type = "opendap") |>
-    dplyr::compute()
+    .tbl <- dplyr::collect(.tbl)
+
+    dplyr::rowwise(.tbl) |>
+        dplyr::group_map(~ tryCatch({
+            climateR::read_dap_file(
+                URL     = .x$URL,
+                id      = .x$variable,
+                varmeta = TRUE
+            )}, error = function(condition) NULL)
+        ) |>
+        dplyr::bind_rows() |>
+        dplyr::rename(variable = id) |>
+        dplyr::left_join(dplyr::select(.tbl, -URL), by = "variable") |>
+        dplyr::mutate(tiled = "", type = "opendap") |>
+        arrow::as_arrow_table()
 }
 
 #' GRIDMET Data Source

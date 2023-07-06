@@ -6,6 +6,7 @@ Imports:
     dplyr,
     glue,
     targets,
+    tarchetypes,
     tidyr,
     terra,
     sf,
