@@ -7,9 +7,9 @@
 
 .tidy_bcsd <- function(.tbl, ...) {
     dplyr::as_tibble(.tbl) |>
+        dplyr::rename(variable = varname) |>
         climateR::dap_meta() |>
-        dplyr::mutate(tiled = "", type = "opendap") |>
-        arrow::as_arrow_table()
+        dplyr::mutate(tiled = "", type = "opendap")
 }
 
 ds_bcsd <- climateR.catalogs::data_source$new(

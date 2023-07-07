@@ -28,7 +28,7 @@
                     dplyr::select(variable = name) |>
                     dplyr::mutate(
                         URL = .tbl$URL[i],
-                        id  = id,
+                        id  = "daymet4",
                         model = gsub(".ncml", "", basename(URL))
                     ) |>
                     climateR::dap_meta() |>

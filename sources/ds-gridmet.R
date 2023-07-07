@@ -15,17 +15,22 @@
 .tidy_gridmet <- function(.tbl, ...) {
     .tbl <- dplyr::collect(.tbl)
 
-    dplyr::rowwise(.tbl) |>
-        dplyr::group_map(~ tryCatch({
+    out <- list()
+    for (i in seq_len(nrow(.tbl))) {
+        out[[i]] <- tryCatch({
             climateR::read_dap_file(
-                URL     = .x$URL,
-                id      = .x$variable,
+                URL     = .tbl$URL[i],
+                id      = .tbl$variable[i],
                 varmeta = TRUE
-            )}, error = function(condition) NULL)
-        ) |>
-        dplyr::bind_rows() |>
+            )
+        }, error = function(condition) NULL)
+    }
+
+    .tbl$URL <- NULL
+
+    dplyr::bind_rows(out) |>
         dplyr::rename(variable = id) |>
-        dplyr::left_join(dplyr::select(.tbl, -URL), by = "variable") |>
+        dplyr::left_join(.tbl, by = "variable") |>
         dplyr::mutate(tiled = "", type = "opendap") |>
         arrow::as_arrow_table()
 }

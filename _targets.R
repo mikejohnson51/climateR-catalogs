@@ -5,13 +5,12 @@ library(targets)
 library(climateR.catalogs)
 
 # Dynamically load data sources
-sources <- new.env()
 lapply(
     list.files(path = here::here("sources/"),
                pattern = "ds-*",
                full.names = TRUE),
     FUN = source,
-    local = sources
+    local = FALSE
 )
 
 targets::tar_option_set(
@@ -28,14 +27,14 @@ logger::log_layout(logger::layout_glue_colors)
 # Sub-pipeline for pulling catalog items --------------------------------------
 # -----------------------------------------------------------------------------
 mapped_workflow <- tarchetypes::tar_map(
-    values = data.frame(src = ls(sources)),
+    values = data.frame(src = ls(.GlobalEnv, pattern = "ds_*")),
     names  = src,
     # Mapped Targets
     list(
         # Load Target
         targets::tar_target(
             load_,
-            get(src, envir = sources),
+            get(src, envir = .GlobalEnv),
             memory = "transient"
         ),
 

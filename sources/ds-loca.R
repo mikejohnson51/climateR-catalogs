@@ -1,5 +1,5 @@
 .pull_loca <- function(...) {
-    arrow::as_arrow_table(plyr::bind_rows(
+    arrow::as_arrow_table(dplyr::bind_rows(
         climateR::read_dap_file(
             "https://cida.usgs.gov/thredds/dodsC/loca_historical",
             id = "loca"

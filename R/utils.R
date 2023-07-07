@@ -8,43 +8,45 @@ schema = c("id", "asset", "URL", "type", "varname", "variable", "description", "
            "crs", "toptobottom", "tiled", "dim_order")
 
 #' @export
-arrow_schema <- arrow::schema(
-  id          = arrow::dictionary(arrow::int32(), arrow::string()),
-  asset       = arrow::string(),
-  URL         = arrow::string(),
-  type        = arrow::dictionary(arrow::int8(), arrow::string()),
-  varname     = arrow::string(),
-  variable    = arrow::dictionary(arrow::int32(), arrow::string()),
-  description = arrow::string(),
-  units       = arrow::string(),
-  model       = arrow::string(),
-  ensemble    = arrow::string(),
-  scenario    = arrow::string(),
-  T_name      = arrow::string(),
-  duration    = arrow::string(),
-  interval    = arrow::string(),
-  nT          = arrow::uint32(),
-  X_name      = arrow::string(),
-  Y_name      = arrow::string(),
-  X1          = arrow::float64(),
-  Xn          = arrow::float64(),
-  Y1          = arrow::float64(),
-  Yn          = arrow::float64(),
-  resX        = arrow::float64(),
-  resY        = arrow::float64(),
-  ncols       = arrow::uint64(),
-  nrows       = arrow::uint64(),
-  crs         = arrow::string(),
-  toptobottom = arrow::bool(),
-  tiled       = arrow::dictionary(arrow::int8(), arrow::string()),
-  dim_order   = arrow::dictionary(arrow::int8(), arrow::string())
-)
+arrow_schema <- function() {
+  arrow::schema(
+    id          = arrow::dictionary(arrow::int32(), arrow::string()),
+    asset       = arrow::string(),
+    URL         = arrow::string(),
+    type        = arrow::dictionary(arrow::int8(), arrow::string()),
+    varname     = arrow::string(),
+    variable    = arrow::dictionary(arrow::int32(), arrow::string()),
+    description = arrow::string(),
+    units       = arrow::string(),
+    model       = arrow::string(),
+    ensemble    = arrow::string(),
+    scenario    = arrow::string(),
+    T_name      = arrow::string(),
+    duration    = arrow::string(),
+    interval    = arrow::string(),
+    nT          = arrow::uint32(),
+    X_name      = arrow::string(),
+    Y_name      = arrow::string(),
+    X1          = arrow::float64(),
+    Xn          = arrow::float64(),
+    Y1          = arrow::float64(),
+    Yn          = arrow::float64(),
+    resX        = arrow::float64(),
+    resY        = arrow::float64(),
+    ncols       = arrow::uint64(),
+    nrows       = arrow::uint64(),
+    crs         = arrow::string(),
+    toptobottom = arrow::bool(),
+    tiled       = arrow::dictionary(arrow::int8(), arrow::string()),
+    dim_order   = arrow::dictionary(arrow::int8(), arrow::string())
+  )
+}
 
 #' @export
 fix_schema <- function(.tbl) {
   .tbl <- dplyr::as_tibble(.tbl)
 
-  schema_names <- names(arrow_schema)
+  schema_names <- names(arrow_schema())
   data_names   <- names(.tbl)
   diff_names   <- setdiff(schema_names, data_names)
 
@@ -80,7 +82,7 @@ fix_schema <- function(.tbl) {
           )) |>
           arrow::as_arrow_table()
 
-  .tbl$cast(arrow_schema)
+  .tbl$cast(arrow_schema())
 }
 
 #' @export
@@ -113,6 +115,7 @@ export_catalog = function(x, path){
   paste0(path, ".rds")
 }
 
+#' @export
 vrt_meta = function(data, all = TRUE){
 
   if(all){

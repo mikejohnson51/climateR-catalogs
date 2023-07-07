@@ -55,7 +55,8 @@
 
 #' @keywords internal
 .tidy_worldclim_hist <- function(.tbl, ...) {
-    dep <- dplyr::group_by(.tbl, id) |>
+    dep <- dplyr::as_tibble(.tbl) |>
+           dplyr::group_by(id) |>
            dplyr::slice(1) |>
            dplyr::select(URL, id) |>
            dplyr::ungroup() |>
