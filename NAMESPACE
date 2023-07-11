@@ -2,6 +2,7 @@
 
 export(arrow_schema)
 export(data_source)
+export(new_data_source)
 export(read_tds)
 export(rectify_schema)
 export(schema)

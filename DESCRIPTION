@@ -30,5 +30,6 @@ RoxygenNote: 7.2.3
 Encoding: UTF-8
 Collate: 
     'class-data_source.R'
+    'meta-data_source.R'
     'meta-targets.R'
     'utils.R'
