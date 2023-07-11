@@ -23,11 +23,16 @@ targets::tar_option_set(
 logger::log_threshold(logger::DEBUG)
 logger::log_layout(logger::layout_glue_colors)
 
+exclude <- c("ds_ldas", "ds_erdap")
+
 # -----------------------------------------------------------------------------
 # Sub-pipeline for pulling catalog items --------------------------------------
 # -----------------------------------------------------------------------------
 mapped_workflow <- tarchetypes::tar_map(
-    values = data.frame(src = ls(.GlobalEnv, pattern = "ds_*")),
+    values = data.frame(src = Filter(
+        function(x) !(x %in% exclude),
+        ls(.GlobalEnv, pattern = "ds_*")
+    )),
     names  = src,
     # Mapped Targets
     list(
@@ -91,15 +96,15 @@ outputs_workflow <- list(
         format = "file"
     ),
 
-    # Output RDS
-    targets::tar_target(
-        catalog_rds,
-        {
-            saveRDS(catalog$to_data_frame(), "private/catalog.rds")
-            "private/catalog.rds"
-        },
-        format = "file"
-    )
+    # # Output RDS
+    # targets::tar_target(
+    #     catalog_rds,
+    #     {
+    #         saveRDS(catalog$to_data_frame(), "private/catalog.rds")
+    #         "private/catalog.rds"
+    #     },
+    #     format = "file"
+    # )
 )
 
 # -----------------------------------------------------------------------------
@@ -122,7 +127,7 @@ list(
     # Fix Schema
     targets::tar_target(
         catalog,
-        climateR.catalogs::fix_schema(catalog_initial),
+        climateR.catalogs::rectify_schema(catalog_initial),
         format = climateR.catalogs::tar_format_arrow_ipc
     ),
 

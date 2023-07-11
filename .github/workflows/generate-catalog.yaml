@@ -111,9 +111,7 @@ jobs:
         with:
           name: climateR Catalogs ${{ env.date }} Release
           files: |
-            private/catalog.json
-            private/catalog.rds
-            private/catalog.parquet
+            private/catalog.*
 
       - name: Prepare failure artifact
         if: failure()
