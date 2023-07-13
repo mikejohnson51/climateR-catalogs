@@ -1,4 +1,4 @@
-.pull_livneh <- function(...) {
+.pull_livneh_daily <- function(...) {
     dates <- seq.Date(
         as.Date("1950-01-01"),
         as.Date("2013-12-31"),
@@ -23,7 +23,7 @@
 
 # ---------------------------------------------------------------------
 
-.tidy_livneh <- function(.tbl, ...) {
+.tidy_livneh_daily <- function(.tbl, ...) {
     dates <- seq.Date(
         as.Date("1950-01-01"),
         as.Date("2013-12-31"),
@@ -63,8 +63,8 @@
 
 # ---------------------------------------------------------------------
 
-ds_livneh <- climateR.catalogs::data_source$new(
+ds_livneh_daily <- climateR.catalogs::data_source$new(
     id   = "Livneh_daily",
-    pull = .pull_livneh,
-    tidy = .tidy_livneh
+    pull = .pull_livneh_daily,
+    tidy = .tidy_livneh_daily
 )
