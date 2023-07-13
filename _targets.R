@@ -1,8 +1,9 @@
 library(targets)
 
 # Loads climateR.catalogs
-# devtools::load_all()
 library(climateR.catalogs)
+
+future::plan(future::multicore)
 
 # Dynamically load data sources
 lapply(

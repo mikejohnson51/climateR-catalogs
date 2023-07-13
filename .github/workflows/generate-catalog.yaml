@@ -99,7 +99,7 @@ jobs:
         run: pak::pkg_install("local::.")
 
       - name: Run targets pipeline
-        run: targets::tar_make()
+        run: targets::tar_make_future()
         shell: Rscript {0}
 
       - name: Get current date
