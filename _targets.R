@@ -95,7 +95,7 @@ outputs_workflow <- list(
             "private/catalog.parquet"
         },
         format = "file"
-    ),
+    )
 
     # # Output RDS
     # targets::tar_target(

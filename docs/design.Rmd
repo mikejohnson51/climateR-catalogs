@@ -4,7 +4,6 @@ author: "Justin Singh-Mohudpur"
 date: "`r Sys.Date()`"
 output:
     html_document:
-        theme: readable
         toc: true
         toc_float: true
         toc_depth: 3
@@ -13,6 +12,10 @@ output:
 ```{r setup, echo = FALSE, include = FALSE}
 here::i_am("docs/design.Rmd")
 ```
+
+# Overview
+
+![](workflow.png)
 
 # Data Source
 
@@ -137,9 +140,36 @@ The data pipeline for `climateR.catalogs` uses [targets](https://github.com/rope
 of easy parallelization, and native support for remote resources.
 
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
-invisible(capture.output(
-    network <- targets::tar_visnetwork(script = here::here("_targets.R"))
-))
+invisible(capture.output({
+    network <- targets::tar_visnetwork(
+        targets_only = TRUE,
+        script = here::here("_targets.R"),
+        outdated = FALSE
+    )
+}))
+
+network[[1]]$nodes <- network[[1]]$nodes |>
+    dplyr::mutate(group = dplyr::case_when(
+        grepl("__", id)      ~ gsub(".*__ds_", "", id),
+        grepl("catalog", id) ~ "catalog",
+        TRUE                 ~ NA
+    ))
+
+network <- visNetwork::visIgraphLayout(
+    graph = network,
+    layout = "layout.circle",
+    type   = "full"
+)
+
+groups  <- unique(network[[1]]$nodes$group)
+network <- visNetwork::visClusteringByGroup(
+    graph  = network,
+    groups = groups[groups != "catalog"],
+    label = "Data Source: ",
+    shape = "database"
+)
+
+network[[1]]$legend <- NULL
 
 network
 ```
