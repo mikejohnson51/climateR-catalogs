@@ -3,7 +3,7 @@ library(targets)
 # Loads climateR.catalogs
 library(climateR.catalogs)
 
-future::plan(future::multicore)
+future::plan(future::multisession)
 
 # Dynamically load data sources
 lapply(
