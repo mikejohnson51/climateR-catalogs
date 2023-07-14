@@ -3,6 +3,8 @@ library(targets)
 # Loads climateR.catalogs
 library(climateR.catalogs)
 
+# future::plan(future::multicore)
+
 # Dynamically load data sources
 lapply(
     list.files(path = here::here("sources/"),
@@ -16,13 +18,15 @@ targets::tar_option_set(
     packages = c("climateR.catalogs", "terra", "sf", "rvest", "glue",
                  "dplyr", "jsonlite", "logger", "rvest", "climateR",
                  "RNetCDF", "data.table", "tidyr", "RCurl",
-                 "arrow")
+                 "arrow"),
+    storage   = "worker",
+    retrieval = "worker"
 )
 
 logger::log_threshold(logger::DEBUG)
 logger::log_layout(logger::layout_glue_colors)
 
-exclude <- c() # c("ds_ldas", "ds_erdap")
+exclude <- c()
 
 # -----------------------------------------------------------------------------
 # Sub-pipeline for pulling catalog items --------------------------------------
@@ -39,7 +43,8 @@ mapped_workflow <- tarchetypes::tar_map(
         targets::tar_target(
             load_,
             get(src, envir = .GlobalEnv),
-            memory = "transient"
+            memory = "transient",
+            deployment = "main"
         ),
 
         # Pull Target
@@ -47,7 +52,8 @@ mapped_workflow <- tarchetypes::tar_map(
             pull_,
             `$`(load_, pull)(),
             format = climateR.catalogs::tar_format_data_source,
-            memory = "transient"
+            memory = "transient",
+            deployment = "worker"
         ),
 
         # Tidy Target
@@ -55,7 +61,8 @@ mapped_workflow <- tarchetypes::tar_map(
             tidy_,
             `$`(pull_, tidy)(),
             format = climateR.catalogs::tar_format_data_source,
-            memory = "transient"
+            memory = "transient",
+            deployment = "worker"
         ),
 
         # Result Target
@@ -63,7 +70,8 @@ mapped_workflow <- tarchetypes::tar_map(
             result_,
             `$`(tidy_, result),
             format = "feather",
-            memory = "transient"
+            memory = "transient",
+            deployment = "worker"
         )
     )
 )
@@ -82,7 +90,8 @@ outputs_workflow <- list(
             )
             "private/catalog.json"
         },
-        format = "file"
+        format = "file",
+        deployment = "main"
     ),
 
     # Output Parquet
@@ -92,7 +101,8 @@ outputs_workflow <- list(
             arrow::write_parquet(catalog, "private/catalog.parquet")
             "private/catalog.parquet"
         },
-        format = "file"
+        format = "file",
+        deployment = "main"
     )
 
     # # Output RDS
@@ -120,14 +130,16 @@ list(
         use_names = FALSE,
         format = climateR.catalogs::tar_format_arrow_ipc,
         memory = "transient",
-        garbage_collection = TRUE
+        garbage_collection = TRUE,
+        deployment = "main"
     ),
 
     # Fix Schema
     targets::tar_target(
         catalog,
         climateR.catalogs::rectify_schema(catalog_initial),
-        format = climateR.catalogs::tar_format_arrow_ipc
+        format = climateR.catalogs::tar_format_arrow_ipc,
+        deployment = "main"
     ),
 
     outputs_workflow
