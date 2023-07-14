@@ -10,8 +10,9 @@ get_maca = function(id = "maca"){
                     names = c(NA, NA, "variable", "model", "ensemble", "scenario", NA, NA, NA, NA),
                     delim = "_",
     ) %>%
-    opendap.catalog::dap_meta() %>%
-    mutate(tiled = "T", type = "opendap", crs = proj, description = long_name) %>%
+
+    climateR::dap_meta() %>%
+    mutate(tiled = "T", type = "opendap") %>%
     rectify_schema(schema)
 
 
@@ -28,12 +29,12 @@ get_gridmet <- function(id = "gridmet"){
 
   for(i in 1:nrow(o)){
     out[[i]] = tryCatch({
-      opendap.catalog::read_dap_file(o$URL[i], id = o$variable[i], varmeta = TRUE)
+      climateR::read_dap_file(o$URL[i], id = o$variable[i], varmeta = TRUE)
     }, error = function(e) { NULL})
   }
 
   bind_rows(out) %>%
-    rename(variable = id, description = long_name, crs = proj) %>%
+    rename(variable = id) %>%
     left_join(select(o, -URL), by = 'variable') %>%
     mutate(tiled = "", type = "opendap") %>%
     rectify_schema(schema)
@@ -44,7 +45,7 @@ get_gridmet <- function(id = "gridmet"){
 get_terraclim = function(id = "terraclim"){
   read_tds("http://thredds.northwestknowledge.net:8080/thredds/terraclimate_aggregated.html", id) %>%
     separate_wider_delim(link, names = c(NA, NA, "variable", NA, NA, NA), delim = "_", too_few = "align_end") %>%
-    opendap.catalog::dap_meta() %>%
+    climateR::dap_meta() %>%
     mutate(tiled = "", type = "opendap", crs = proj, description = long_name) %>%
     rectify_schema(schema)
 }
@@ -60,7 +61,7 @@ get_terraclim_normals = function(id = "terraclim_normals"){
   separate_wider_delim(link2, names = c("scenario", 'variable'), delim = "_") %>%
   mutate(scenario = gsub("TerraClimate", "", scenario)) %>%
   filter(!is.na(variable)) |>
-  opendap.catalog::dap_meta() |>
+  climateR::dap_meta() |>
   mutate(tiled = "", interval = "1 month", type = "opendap", crs = proj, description = long_name) %>%
   rectify_schema(schema)
 
@@ -84,7 +85,7 @@ get_terraclim_normals = function(id = "terraclim_normals"){
 #
 #   for(i in 1:nrow(d2)){
 #     out[[i]] = tryCatch({
-#       opendap.catalog::read_dap_file(d2$URL[i], id = d2$variable[i], varmeta = TRUE)
+#       climateR::read_dap_file(d2$URL[i], id = d2$variable[i], varmeta = TRUE)
 #     }, error = function(e) { NULL})
 #   }
 #
@@ -97,7 +98,7 @@ get_terraclim_normals = function(id = "terraclim_normals"){
 #   out2 = list()
 #   for(i in 1:nrow(d2)){
 #     out[[i]] = tryCatch({
-#       opendap.catalog::read_dap_file(d2$URL[i], id = d2$variable[i], varmeta = TRUE)
+#       climateR::read_dap_file(d2$URL[i], id = d2$variable[i], varmeta = TRUE)
 #     }, error = function(e) { NULL})
 #   }
 #
@@ -126,7 +127,7 @@ get_daymet4 = function(id = "daymet4"){
         filter(ndims == 3) %>%
         select(variable = name) %>%
         mutate(URL = urls$URL[j], id = id, model = gsub(".ncml", "",basename(urls$URL[j]))) %>%
-        opendap.catalog::dap_meta() %>%
+        climateR::dap_meta() %>%
         mutate(tiled = "", variable = varname, type = "opendap", crs = proj, description = long_name)
   }
 
@@ -144,7 +145,7 @@ get_ldas = function(){
   ldas = list()
 
   for(i in 1:length(URL)){
-    ldas[[i]] = opendap.catalog::read_dap_file(paste0(URL[i], "/"), id = basename(URL[i]))
+    ldas[[i]] = climateR::read_dap_file(paste0(URL[i], "/"), id = basename(URL[i]))
     message(i, " of ", length(URL))
   }
 
@@ -244,8 +245,8 @@ get_worldclim_hist = function(){
 # Data Source 9 -----------------------------------------------------------
 get_loca = function(id = "loca"){
   bind_rows(
-    opendap.catalog::read_dap_file("https://cida.usgs.gov/thredds/dodsC/loca_historical", id = id),
-    opendap.catalog::read_dap_file("https://cida.usgs.gov/thredds/dodsC/loca_future", id = id)
+    climateR::read_dap_file("https://cida.usgs.gov/thredds/dodsC/loca_historical", id = id),
+    climateR::read_dap_file("https://cida.usgs.gov/thredds/dodsC/loca_future", id = id)
   ) %>%
     separate_wider_delim(varname,
                     names = c("variable", "model", "ensemble", "scenario"),
@@ -259,8 +260,8 @@ get_loca = function(id = "loca"){
 get_bcca <- function(id = "bcca"){
 
   bind_rows(
-    opendap.catalog::read_dap_file(URL = "https://cida.usgs.gov/thredds/dodsC/cmip5_bcca/future", id = id),
-    opendap.catalog::read_dap_file(URL = "https://cida.usgs.gov/thredds/dodsC/cmip5_bcca/historical", id = id)
+    climateR::read_dap_file(URL = "https://cida.usgs.gov/thredds/dodsC/cmip5_bcca/future", id = id),
+    climateR::read_dap_file(URL = "https://cida.usgs.gov/thredds/dodsC/cmip5_bcca/historical", id = id)
   ) %>%
     separate_wider_delim(varname,
                     names = c(NA, NA, "variable", NA, "model", "scenario", "ensemble"),
@@ -272,7 +273,7 @@ get_bcca <- function(id = "bcca"){
 
 # Data Source 11 -----------------------------------------------------------
 get_bcsd_vic <- function(id = 'bcsd_vic'){
-  opendap.catalog::read_dap_file("https://cida.usgs.gov/thredds/dodsC/BCSD_mon_VIC", id = id) %>%
+  climateR::read_dap_file("https://cida.usgs.gov/thredds/dodsC/BCSD_mon_VIC", id = id) %>%
     separate_wider_delim(varname,
                     names = c("model", "scenario", "ensemble", "variable"),
                     delim = "_",
@@ -285,15 +286,16 @@ get_bcsd_vic <- function(id = 'bcsd_vic'){
 
 # Data Source 12 -----------------------------------------------------------
 get_bcsd = function(id = "bcsd"){
-  opendap.catalog::read_dap_file("https://cida.usgs.gov/thredds/dodsC/bcsd_obs", id = id) %>%
-    opendap.catalog::dap_meta() %>%
-    mutate(tiled = "", type = "opendap", crs = proj, description = long_name) %>%
+
+  raw = climateR::read_dap_file("https://cida.usgs.gov/thredds/dodsC/bcsd_obs", id = id) %>%
+    climateR::dap_meta() %>%
+    mutate(tiled = "", type = "opendap") %>%
     rectify_schema(schema)
 }
 
 # Data Source 13 -----------------------------------------------------------
 get_dcp = function(id = "dcp"){
-  opendap.catalog::read_dap_file(URL = "https://cida.usgs.gov/thredds/dodsC/dcp/conus_t", id = id) %>%
+  climateR::read_dap_file(URL = "https://cida.usgs.gov/thredds/dodsC/dcp/conus_t", id = id) %>%
     separate_wider_delim(varname,
                     names = c("model", "scenario", "variable", NA, NA),
                     delim = "_",
@@ -305,7 +307,7 @@ get_dcp = function(id = "dcp"){
 
 # Data Source 14 -----------------------------------------------------------
 get_maurer = function(id = "maurer"){
-  opendap.catalog::read_dap_file(URL = "https://cida.usgs.gov/thredds/dodsC/maurer/maurer_brekke_w_meta.ncml", id = id) %>%
+  climateR::read_dap_file(URL = "https://cida.usgs.gov/thredds/dodsC/maurer/maurer_brekke_w_meta.ncml", id = id) %>%
     separate_wider_delim(varname,
                     names = c("scenario", "model", "ensemble", "variable"),
                     delim = "_",
@@ -317,8 +319,8 @@ get_maurer = function(id = "maurer"){
 
 # Data Source 15 -----------------------------------------------------------
 get_ssebopeta = function(id = "ssebopeta"){
-  opendap.catalog::read_dap_file(URL = "https://cida.usgs.gov/thredds/dodsC/ssebopeta/monthly", id = id) %>%
-    opendap.catalog::dap_meta() %>%
+  climateR::read_dap_file(URL = "https://cida.usgs.gov/thredds/dodsC/ssebopeta/monthly", id = id) %>%
+    climateR::dap_meta() %>%
     mutate(tiled = "", type = "opendap", crs = proj, description = long_name) %>%
     rectify_schema(schema)
 }
@@ -326,16 +328,16 @@ get_ssebopeta = function(id = "ssebopeta"){
 # Data Source 16 -----------------------------------------------------------
 get_topowx = function(id = "ssebopeta"){
   bind_rows(
-    opendap.catalog::read_dap_file(URL = "https://cida.usgs.gov/thredds/dodsC/topowx", id = "topowx_daily"),
-    opendap.catalog::read_dap_file(URL = "https://cida.usgs.gov/thredds/dodsC/topowx_monthly", id = "topowx_monthly"),
-    opendap.catalog::read_dap_file(URL = "https://cida.usgs.gov/thredds/dodsC/topowx_normals", id = "topowx_normals")) %>%
+    climateR::read_dap_file(URL = "https://cida.usgs.gov/thredds/dodsC/topowx", id = "topowx_daily"),
+    climateR::read_dap_file(URL = "https://cida.usgs.gov/thredds/dodsC/topowx_monthly", id = "topowx_monthly"),
+    climateR::read_dap_file(URL = "https://cida.usgs.gov/thredds/dodsC/topowx_normals", id = "topowx_normals")) %>%
     mutate(tiled = "", variable = varname, type = "opendap", crs = proj, description = long_name) %>%
     rectify_schema(schema)
 }
 
 # Data Source 17 -----------------------------------------------------------
 get_prism_monthly = function(id = "prism_monthly"){
-  opendap.catalog::read_dap_file(URL = "https://cida.usgs.gov/thredds/dodsC/prism_v2", id = id) %>%
+  climateR::read_dap_file(URL = "https://cida.usgs.gov/thredds/dodsC/prism_v2", id = id) %>%
     mutate(variable = varname, tiled = "", type = "opendap", crs = proj, description = long_name) %>%
     rectify_schema(schema)
 }
@@ -662,7 +664,7 @@ get_modis = function(URL = 'https://opendap.cr.usgs.gov/opendap/hyrax/') {
 
     raw = if (!is.null(nc)) {
       tryCatch({
-        raw  = opendap.catalog:::.resource_grid(nc, X_name = "XDim", Y_name = "YDim")
+        raw  = climateR:::.resource_grid(nc, X_name = "XDim", Y_name = "YDim")
         raw$X_name = 'XDim'
         raw$Y_name = "YDim"
         raw$tile = tmp2$tile[x]
@@ -677,7 +679,7 @@ get_modis = function(URL = 'https://opendap.cr.usgs.gov/opendap/hyrax/') {
           Y_name <- unique(atts$Y_name)
 
           tryCatch({
-            raw  = opendap.catalog:::.resource_grid(nc, X_name = X_name, Y_name = Y_name)
+            raw  = climateR:::.resource_grid(nc, X_name = X_name, Y_name = Y_name)
             raw$X_name = X_name
             raw$Y_name = Y_name
             raw$tile = tmp2$tile[x]
@@ -744,7 +746,7 @@ get_livneh = function(id = "Livneh_daily"){
    slice(1) %>%
    select(ym, duration, nT)
 
- opendap.catalog::read_dap_file(df$URL[2], varname = NULL, id = id) %>%
+ climateR::read_dap_file(df$URL[2], varname = NULL, id = id) %>%
    mutate(URL = NULL) %>%
    right_join(df, by = "id") %>%
    mutate(duration = NULL, nT = NULL, description = long_name, variable = varname, crs = proj) %>%
@@ -772,7 +774,7 @@ get_livneh_monthly = function(id = "Livneh_monthly"){
     slice(1) %>%
     select(ym, duration, nT)
 
-  opendap.catalog::read_dap_file(df$URL[2], varname = NULL, id = id) %>%
+  climateR::read_dap_file(df$URL[2], varname = NULL, id = id) %>%
     mutate(URL = NULL) %>%
     right_join(df, by = "id") %>%
     mutate(duration = NULL, interval = "1 month", nT = NULL, description = long_name, variable = varname, crs = proj) %>%
@@ -803,7 +805,7 @@ get_livneh_fluxes = function(id = "Livneh_fluxes"){
     slice(1) %>%
     select(ym, duration, nT)
 
-  opendap.catalog::read_dap_file(df$URL[2], varname = NULL, id = id) %>%
+  climateR::read_dap_file(df$URL[2], varname = NULL, id = id) %>%
     mutate(URL = NULL) %>%
     right_join(df, by = "id") %>%
     mutate(duration = NULL, nT = NULL, description = long_name, variable = varname, crs = proj) %>%
@@ -862,7 +864,7 @@ get_prism_daily = function(){
 # Data Source 28 ----------------------------------------------------------
 
 get_WUS_HSP = function(){
-opendap.catalog::read_dap_file("https://cida.usgs.gov/thredds/dodsC/WUS_HSP/SD_A1B_2040s",
+  climateR::read_dap_file("https://cida.usgs.gov/thredds/dodsC/WUS_HSP/SD_A1B_2040s",
                                     id = "WUS_HSP") %>%
  separate_wider_delim(varname,
                        names = c("junk", "scenario", "junk2", "model", "variable"),
@@ -945,3 +947,68 @@ get_loca_hydro = function(){
     rectify_schema(schema)
 }
 
+
+# Data Source 29 ----------------------------------------------------------
+
+get_merra = function( base = 'https://goldsmr5.gesdisc.eosdis.nasa.gov/opendap/MERRA2/'){
+
+  das = html_nodes(read_html(base), "a")
+  URL = unique(gsub("\\.[a-z]*$","", html_attr(das, "href")))
+  assests = dirname(URL[grepl("/contents", URL)])
+
+  merra1 = list()
+
+  for(a in 1:length(assests)){
+
+    g = expand.grid(assest = assests[a], year = 1980:2023,
+                    month = sprintf("%02s", 1:12)) %>%
+      mutate(ext = paste0(base, assest, "/", year, "/", month))
+
+    x = read_tds(g$ext[1], id = g$Var1[1], append = "")
+
+    x = filter(x, grepl(".nc4$", x$URL)) %>%
+      mutate(URL = paste0('https://goldsmr5.gesdisc.eosdis.nasa.gov/opendap',link))
+
+    var = read_dap_file(x$URL[1], id = "MERRA2")
+
+    merra = list()
+
+    for(i in 1:nrow(g)){
+
+      dates = as.Date(paste(g$year[i],
+                            g$month[i],
+                            "01",
+                            sep = "-"))
+
+      files = gsub("19840101", '{date}', unique(basename(var$URL)))
+
+      x2 = data.frame(
+        date = seq.Date(dates, by = "day",
+                        length.out = days_in_month(dates))) %>%
+        mutate( date2 = gsub("-", "", date),
+                duration = glue("{date} 01:30:00/{date} 22:30:00"),
+                URL = glue(files, date = date2),
+                tiled = "T"
+        )
+
+      merra[[i]] =  crossing(select(x2, -date, -date2),
+                             select(var, -URL, -duration)) %>%
+        mutate(URL = paste0(dirname(g$ext[i]), URL))
+
+    }
+
+    merra1[[a]] = data.table::rbindlist(merra) %>%
+      mutate(variable  = varname,
+             type = "opendap") %>%
+      rectify_schema(schema) %>%
+      mutate(asset = assests[a])
+
+    message("\tFinished [", assests[a], "] (", a, " of ", length(assests), ")" )
+  }
+
+
+  rbindlist(merra1)
+}
+
+
+# Data Source 30 ----------------------------------------------------------

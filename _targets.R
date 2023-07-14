@@ -9,7 +9,6 @@ tar_option_set(packages = c("terra", "sf", "rvest", "glue", "dplyr",
                             "jsonlite", "logger", "rvest", "climateR",
                             "RNetCDF", "data.table", "tidyr", "RCurl"))
 
-
 list(
   tar_target(maca,                get_maca()),
   tar_target(gridmet,             get_gridmet()),
