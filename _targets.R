@@ -3,8 +3,6 @@ library(targets)
 # Loads climateR.catalogs
 library(climateR.catalogs)
 
-future::plan(future::multisession)
-
 # Dynamically load data sources
 lapply(
     list.files(path = here::here("sources/"),
@@ -24,7 +22,7 @@ targets::tar_option_set(
 logger::log_threshold(logger::DEBUG)
 logger::log_layout(logger::layout_glue_colors)
 
-exclude <- c("ds_ldas", "ds_erdap")
+exclude <- c() # c("ds_ldas", "ds_erdap")
 
 # -----------------------------------------------------------------------------
 # Sub-pipeline for pulling catalog items --------------------------------------
