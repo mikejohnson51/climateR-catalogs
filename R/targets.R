@@ -11,6 +11,7 @@ get_maca = function(id = "maca"){
                     delim = "_",
     ) %>%
 
+
     climateR::dap_meta() %>%
     mutate(tiled = "T", type = "opendap") %>%
     rectify_schema(schema)
@@ -286,6 +287,7 @@ get_bcsd_vic <- function(id = 'bcsd_vic'){
 
 # Data Source 12 -----------------------------------------------------------
 get_bcsd = function(id = "bcsd"){
+
 
   raw = climateR::read_dap_file("https://cida.usgs.gov/thredds/dodsC/bcsd_obs", id = id) %>%
     climateR::dap_meta() %>%
