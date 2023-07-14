@@ -25,7 +25,7 @@
 
     data <- list()
 
-    for (i in seq_len(urls)) {
+    for (i in seq_along(urls)) {
         r          <- terra::rast(urls[i])
         df         <- data.frame(variable = names(r))
         df$id      <- "HBV"

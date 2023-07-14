@@ -26,7 +26,7 @@
 
     g3 = data.frame(rbind(g1, g2)) |>
         dplyr::distinct() |>
-        dplyr::filter(complete.cases(.))
+        tidyr::drop_na()
 
     names(g3) = c("model", "scenario", "varname", "year")
 

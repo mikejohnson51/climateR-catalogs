@@ -35,7 +35,7 @@
             remove = FALSE
         ) |>
         dplyr::mutate(
-            description = paste(measure, varialle, depth),
+            description = paste(measure, variable, depth),
             tiled = "NA",
             type = "vrt",
             variable = varname
