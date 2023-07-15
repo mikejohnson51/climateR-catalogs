@@ -1,15 +1,22 @@
 .pull_fcpg <- function(...) {
+    Sys.setenv(GDAL_SKIP = "DODS")
+
     base <- "https://prod-is-usgs-sb-prod-publish.s3.amazonaws.com/5f3ab12082ce8df5b6c4076a/params.json"
     info <- jsonlite::read_json(base, simplifyVector = TRUE)
 
-    data.frame(
+    result <- data.frame(
         id = "USGS FCPG",
         varname = info$parameters,
         URL = unlist(info$urls)
     ) |>
-        dplyr::mutate(variable = gsub("_fcpg.vrt", "", basename(URL))) |>
+        # dplyr::mutate(variable = gsub("_fcpg.vrt", "", basename(URL))) |>
+        dplyr::mutate(variable = varname, URL = paste0("/vsicurl/", URL)) |>
         climateR.catalogs::vrt_meta() |>
         arrow::as_arrow_table()
+
+    Sys.unsetenv("GDAL_SKIP")
+
+    result
 }
 
 # ---------------------------------------------------------------------

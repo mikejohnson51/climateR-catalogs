@@ -20,13 +20,7 @@
         "livneh_NAmerExt_15Oct2014.{tmp$ym}.mon.nc"
     )
 
-    lapply(
-        urls,
-        climateR::read_dap_file,
-        id = "Livneh_monthly",
-        varname = NULL
-    ) |>
-        dplyr::bind_rows() |>
+    climateR::read_dap_file(urls[2], varname = NULL, id = "Livneh_monthly") |>
         arrow::as_arrow_table()
 }
 

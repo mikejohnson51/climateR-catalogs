@@ -37,9 +37,13 @@
 
             dplyr::bind_rows(collection) |>
                 saveRDS(cache_path)
-
-            return(cache_path)
         }
+    }
+
+    if (file.exists(cache_path)) {
+        return(cache_path)
+    } else {
+        return(NULL)
     }
 }
 
@@ -59,10 +63,12 @@
 
     # Generate .RDS files
     paths <- lapply(seq_len(nrow(servers)), function(i) {
-        .make_cache(servers[i, ], cache_dir)
+        tryCatch({
+            .make_cache(servers[i, ], cache_dir)
+        }, error = function(x) NULL)
     })
 
-    lapply(paths, readRDS) |>
+    lapply(paths[!sapply(paths, is.null)], readRDS) |>
         dplyr::bind_rows() |>
         arrow::as_arrow_table()
 }

@@ -20,13 +20,7 @@
         "Fluxes_Livneh_NAmerExt_15Oct2014.{tmp$ym}.nc"
     )
 
-    lapply(
-        urls,
-        climateR::read_dap_file,
-        id = "Livneh_fluxes",
-        varname = NULL
-    ) |>
-        dplyr::bind_rows() |>
+    climateR::read_dap_file(urls[2], varname = NULL, id = "Livneh_fluxes") |>
         arrow::as_arrow_table()
 }
 

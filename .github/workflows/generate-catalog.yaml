@@ -98,6 +98,19 @@ jobs:
         shell: Rscript {0}
         run: pak::pkg_install("local::.")
 
+      - name: Setup EarthData Auth
+        shell: Rscript {0}
+        env:
+          CATALOGS_NETRC_LOGIN: ${{ secrets.CATALOGS_NETRC_LOGIN }}
+          CATALOGS_NETRC_PASSWORD: ${{ secrets.CATALOGS_NETRC_PASSWORD }}
+        run: |
+          if (Sys.getenv("CATALOGS_NETRC_LOGIN") == "" || Sys.getenv("CATALOGS_NETRC_PASSWORD") == "") {
+              stop("NASA EarthData Credentials not found!")
+          }
+
+          climateR::writeNetrc(login = Sys.getenv("CATALOGS_NETRC_LOGIN"), password = Sys.getenv("CATALOGS_NETRC_PASSWORD"), overwrite = TRUE)
+          climateR::writeDodsrc()
+
       - name: Run targets pipeline
         run: targets::tar_make()
         shell: Rscript {0}
@@ -115,7 +128,9 @@ jobs:
 
       - name: Prepare failure artifact
         if: failure()
-        run: rm -rf .git .github 
+        run: |
+          rm -rf .git .github
+          Rscript -e "cat(jsonlite::toJSON(targets::tar_meta()))"
 
       - name: Post failure artifact
         if: failure()

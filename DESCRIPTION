@@ -13,6 +13,7 @@ Imports:
     rvest,
     jsonlite,
     logger,
+    lubridate,
     ncmeta,
     pacman,
     RNetCDF,

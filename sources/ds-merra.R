@@ -9,6 +9,7 @@
 
     assets <- dirname(URL[grepl("/contents", URL)])
 
+    merra1 <- list()
     for (a in seq_along(assets)) {
         g = expand.grid(
             asset = assets[a],
@@ -60,9 +61,6 @@
 
         merra1[[a]] = data.table::rbindlist(merra) |>
             dplyr::mutate(variable  = varname, type = "opendap") |>
-            arrow::as_arrow_table() |>
-            climateR.catalogs::rectify_schema(schema) |>
-            dplyr::as_tibble() |>
             dplyr::mutate(asset = assets[a])
 
         message(

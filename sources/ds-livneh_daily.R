@@ -11,13 +11,7 @@
         "livneh_NAmerExt_15Oct2014.{unique(format(dates, '%Y%m'))}.nc"
     )
 
-    lapply(
-        urls,
-        climateR::read_dap_file,
-        id = "Livneh_daily",
-        varname = NULL
-    ) |>
-        dplyr::bind_rows() |>
+    climateR::read_dap_file(urls[2], varname = NULL, id = "Livneh_daily") |>
         arrow::as_arrow_table()
 }
 

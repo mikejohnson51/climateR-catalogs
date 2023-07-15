@@ -75,9 +75,26 @@ data_source <- R6::R6Class("data_source",
         #'
         #' @param ... (`any`)\cr
         #'  User-defined parameters that may be used.
-        pull = function(...) {
-            private$.data <- private$.pull(...) |>
-                             arrow::as_arrow_table()
+        pull = function(..., ..attempts) {
+            if (missing(..attempts)) {
+                ..attempts <- 1
+            } else {
+                ..attempts <- ..attempts + 1
+            }
+
+            tryCatch({
+                private$.data <- private$.pull(...) |>
+                                arrow::as_arrow_table()
+            }, error = function(condition) {
+                if (..attempts > 2) {
+                    targets::tar_throw_run(paste0(
+                        private$.id,
+                        ": failed after 3 attempts.\n"
+                    ), condition)
+                } else {
+                    self$pull(..., ..attempts = ..attempts)
+                }
+            })
 
             invisible(self)
         },
@@ -87,9 +104,26 @@ data_source <- R6::R6Class("data_source",
         #'
         #' @param ... (`any`)\cr
         #'  User-defined parameters that may be used.
-        tidy = function(...) {
-            private$.data <- private$.tidy(private$.data, ...) |>
-                             arrow::as_arrow_table()
+        tidy = function(..., ..attempts) {
+            if (missing(..attempts)) {
+                ..attempts <- 1
+            } else {
+                ..attempts <- ..attempts + 1
+            }
+
+            tryCatch({
+                private$.data <- private$.tidy(private$.data, ...) |>
+                                 arrow::as_arrow_table()
+            }, error = function(condition) {
+                if (..attempts > 2) {
+                    targets::tar_throw_run(paste0(
+                        private$.id,
+                        ": failed after 3 attempts.\n"
+                    ), condition)
+                } else {
+                    self$tidy(..., ..attempts = ..attempts)
+                }
+            })
 
             private$.finished <- TRUE
 
