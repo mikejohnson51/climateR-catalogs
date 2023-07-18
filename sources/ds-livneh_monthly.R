@@ -57,7 +57,7 @@
     df2 <- dates |>
            dplyr::group_by(ym) |>
            dplyr::mutate(
-               duration = paste0(dates$ym[1], "/", dates$ym[dplyr::n()]),
+               duration = paste0(dates[1], "/", dates[dplyr::n()]),
                nT = 1
             ) |>
             dplyr::slice(1) |>

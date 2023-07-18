@@ -4,6 +4,7 @@ License: MIT
 Imports:
     arrow,
     dplyr,
+    httr,
     glue,
     targets,
     tarchetypes,

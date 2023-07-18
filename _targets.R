@@ -26,7 +26,7 @@ targets::tar_option_set(
 logger::log_threshold(logger::DEBUG)
 logger::log_layout(logger::layout_glue_colors)
 
-exclude <- c()
+exclude <- c() # modify this to exclude data sources, i.e. c("ds_modis")
 
 # -----------------------------------------------------------------------------
 # Sub-pipeline for pulling catalog items --------------------------------------

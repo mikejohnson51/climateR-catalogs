@@ -3,14 +3,17 @@
 
     links <- NULL
     if (!file.exists(cache_path) || overwrite) {
+        message("not found or overwrite: ", cache_path)
         links <- tryCatch({
-            rvest::read_html(server$url) |>
+            httr::GET(server$url, httr::timeout(30)) |>
+                rvest::read_html() |>
                 rvest::html_nodes("a") |>
                 rvest::html_attr("href")
         }, error = function(condition) NULL)
     }
 
     if (!is.null(links)) {
+        message("pulling links")
         ds <- data.frame(link = links) |>
               dplyr::filter(grepl("html$", link)) |>
               dplyr::filter(grepl("griddap", link)) |>
@@ -20,6 +23,7 @@
               dplyr::filter(id != "documentation")
 
         if (nrow(ds) > 0) {
+            message("reading DAP from ", nrow(ds), " rows")
             ds <- dplyr::mutate(ds, n = seq_len(dplyr::n()), mx = max(n))
 
             collection <- lapply(seq_len(nrow(ds)), function(i) {
@@ -41,14 +45,22 @@
     }
 
     if (file.exists(cache_path)) {
+        message("returning ", cache_path)
         return(cache_path)
     } else {
-        return(NULL)
+        message("returning NA")
+        return(NA)
     }
 }
 
 
 .pull_erdap <- function(cache_dir = "data-raw", ...) {
+    if (!dir.exists(cache_dir)) {
+        stop(cache_dir, " does not exist")
+    }
+
+    cache_dir <- normalizePath(cache_dir, mustWork = TRUE)
+
     servers <-
         "https://irishmarineinstitute.github.io/awesome-erddap/erddaps.json" |>
         jsonlite::read_json(simplifyVector = TRUE) |>
@@ -68,7 +80,12 @@
         }, error = function(x) NULL)
     })
 
-    lapply(paths[!sapply(paths, is.null)], readRDS) |>
+    browser()
+
+    message("creating ERDAP table")
+
+    Filter(function(path) !is.na(path) && file.exists(path), paths) |>
+        lapply(readRDS) |>
         dplyr::bind_rows() |>
         arrow::as_arrow_table()
 }
