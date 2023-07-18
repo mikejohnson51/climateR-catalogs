@@ -58,8 +58,8 @@ jobs:
 
       # Remove due to an issue with key signing, causes failure
       # when running `apt-get update`.
-      - name: Remove hhvm PPA
-        run: grep -v "hhvm" /etc/apt/sources.list > tmpfile && mv tmpfile /etc/apt/sources.list
+      # - name: Remove hhvm PPA
+      #   run: grep -v "hhvm" /etc/apt/sources.list > tmpfile && mv tmpfile /etc/apt/sources.list
 
       - name: Setup R
         uses: r-lib/actions/setup-r@v2
