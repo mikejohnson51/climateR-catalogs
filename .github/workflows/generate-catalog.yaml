@@ -24,32 +24,37 @@
 # SOFTWARE.
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      # Ensure workflow is only triggered on push
-      # if the following paths are modified.
-      - '_targets.R'
-      - 'DESCRIPTION'
-      - 'R/**.R'
-      - 'data-raw/*'
+  # ---------------------------------------------------------------------------
+  # push:
+  #   branches:
+  #     - main
+  #   paths:
+  #     # Ensure workflow is only triggered on push
+  #     # if the following paths are modified.
+  #     - '_targets.R'
+  #     - 'DESCRIPTION'
+  #     - 'R/**.R'
+  #     - 'data-raw/*'
+  # ---------------------------------------------------------------------------
+
+  # Only run on a schedule, uncomment above for push-based runs
   schedule:
     # Run this workflow at 00:00 UTC on the 1st of each month
     - cron: '0 0 1 * *'
 
-name: targets
+name: Generate Catalog Release
 
 jobs:
   generate-catalog:
     runs-on: ubuntu-latest
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
-      PAK_PATHS_ROOT: ~/.local/share/pak
     steps:
       - name: Checkout
         uses: actions/checkout@v3
 
+      # Remove due to an issue with key signing, causes failure
+      # when running `apt-get update`.
       - name: Remove hhvm PPA
         run: grep -v "hhvm" /etc/apt/sources.list > tmpfile && mv tmpfile /etc/apt/sources.list
 
@@ -57,10 +62,6 @@ jobs:
         uses: r-lib/actions/setup-r@v2
         with:
           r-version: '4.2.1'
-
-      # Required for targets?
-      - name: Setup Pandoc
-        uses: r-lib/actions/setup-pandoc@v2
 
       - name: Install Linux system dependencies
         if: runner.os == 'Linux'
@@ -93,78 +94,43 @@ jobs:
       - name: Setup R enviroment
         uses: r-lib/actions/setup-r-dependencies@v2
 
-      # - name: Cache packages
-      #   uses: actions/cache@v3
-      #   with:
-      #     path: ${{ env.PAK_PATHS_ROOT }}
-      #     key: ${{ runner.os }}-pak-${{ hashFiles('**/pkg.lock') }}
-      #     restore-keys: ${{ runner.os }}-pak-
-      # - name: Restore packages
-      #   shell: Rscript {0}
-      #   run: |
-      #     if (!requireNamespace("pak", quietly = TRUE)) install.packages("pak")
-      #     pak::local_install_dev_deps()
-
-      # Check if a previous run exists, only if
-      # this workflow is run out-of-schedule.
-      - name: Check if previous runs exists
-        if: github.event.schedule != '0 0 1 * *
-        id: runs-exist
-        run: git ls-remote --exit-code --heads origin targets-runs
-        continue-on-error: true
-
-      - name: Checkout previous run
-        if: steps.runs-exist.outcome == 'success'
-        uses: actions/checkout@v3
-        with:
-          ref: targets-runs
-          fetch-depth: 1
-          path: .targets-runs
-
-      - name: Restore output files from the previous run
-        if: steps.runs-exist.outcome == 'success'
-        run: |
-          for (dest in scan(".targets-runs/.targets-files", what = character())) {
-            source <- file.path(".targets-runs", dest)
-            if (!file.exists(dirname(dest))) dir.create(dirname(dest), recursive = TRUE)
-            if (file.exists(source)) file.rename(source, dest)
-          }
+      - name: Install climateR.catalogs
         shell: Rscript {0}
+        run: pak::pkg_install("local::.")
+
+      - name: Setup EarthData Auth
+        shell: Rscript {0}
+        env:
+          CATALOGS_NETRC_LOGIN: ${{ secrets.CATALOGS_NETRC_LOGIN }}
+          CATALOGS_NETRC_PASSWORD: ${{ secrets.CATALOGS_NETRC_PASSWORD }}
+        run: |
+          if (Sys.getenv("CATALOGS_NETRC_LOGIN") == "" || Sys.getenv("CATALOGS_NETRC_PASSWORD") == "") {
+              stop("NASA EarthData Credentials not found!")
+          }
+
+          climateR::writeNetrc(login = Sys.getenv("CATALOGS_NETRC_LOGIN"), password = Sys.getenv("CATALOGS_NETRC_PASSWORD"), overwrite = TRUE)
+          climateR::writeDodsrc()
 
       - name: Run targets pipeline
         run: targets::tar_make()
         shell: Rscript {0}
 
-      - name: Identify files that the targets pipeline produced
-        run: git ls-files -mo --exclude=renv > .targets-files
+      - name: Get current date
+        id: date
+        run: echo "{date}={$(date +'%B-%Y')}" >> $GITHUB_STATE
 
-      - name: Create the runs branch if it does not already exist
-        if: steps.runs-exist.outcome != 'success'
-        run: git checkout --orphan targets-runs
-
-      - name: Put the worktree in the runs branch if the latter already exists
-        if: steps.runs-exist.outcome == 'success'
-        run: |
-          rm -r .git
-          mv .targets-runs/.git .
-          rm -r .targets-runs
-
-      # - name: Upload latest run
-      #   run: |
-      #     git config --local user.name "GitHub Actions"
-      #     git config --local user.email "actions@github.com"
-      #     rm -r .gitignore .github/workflows
-      #     git add --all -- ':!renv'
-      #     for file in $(git ls-files -mo --exclude=renv)
-      #     do
-      #       git add --force $file
-      #     done
-      #     git commit -am "Run pipeline"
-      #     git push origin targets-runs
+      - name: Create catalog release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: climateR Catalogs ${{ env.date }} Release
+          files: |
+            private/catalog.*
 
       - name: Prepare failure artifact
         if: failure()
-        run: rm -rf .git .github .targets-files .targets-runs
+        run: |
+          rm -rf .git .github
+          Rscript -e "cat(jsonlite::toJSON(targets::tar_meta()))"
 
       - name: Post failure artifact
         if: failure()

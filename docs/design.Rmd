@@ -1,0 +1,175 @@
+---
+title: "Data Catalog Pipeline and Design"
+author: "Justin Singh-Mohudpur"
+date: "`r Sys.Date()`"
+output:
+    html_document:
+        toc: true
+        toc_float: true
+        toc_depth: 3
+---
+
+```{r setup, echo = FALSE, include = FALSE}
+here::i_am("docs/design.Rmd")
+```
+
+# Overview
+
+![](workflow.png)
+
+# Data Source
+
+Data sources in `climateR.catalogs` are defined by a singular [R6 Class](https://r6.r-lib.org/articles/Introduction.html),
+`climateR.catalogs::data_source`. This R6 class provides the back-end plumbing for
+pulling, tidying, and IPC.
+
+## Example Implementation
+
+Data sources are created by defining 3 things:
+
+1. An identifier unique to the data source,
+2. A `pull` function,
+3. A `tidy` function.
+
+For example, let's reimplement the [GRIDMET](https://www.climatologylab.org/gridmet.html) data source.
+
+### Pull
+
+The GRIDMET dataset is accessible via OPeNDAP from associated THREDDS server.
+Using this THREDDS Data Server, we can use some convenience functions to read from it:
+
+```r
+arrow::as_arrow_table(climateR.catalogs::read_tds(
+    paste0(
+        "http://thredds.northwestknowledge.net:8080",
+        "/thredds/reacch_climate_MET_aggregated_catalog.html"
+    ),
+    "gridmet"
+))
+
+#> Table
+#> 42 rows x 3 columns
+#> $link <string>
+#> $id <string>
+#> $URL <string>
+```
+
+One thing you may notice is that we are converting the output of `read_tds` to an Arrow Table.
+We do this for a few reasons:
+
+- The `targets` pipeline saves/loads previous targets through Arrow IPC.
+- The `data_source` R6 objects are easily defined in Arrow IPC by taking advantage of metadata within the schema.
+- We can take advantage of Arrow compute capabilities where applicable, so it makes sense to convert as early as possible.
+
+Now that we have this table, we can wrap a function around it, and assign it as our pull function for the data source:
+
+```r
+.pull_gridmet <- function(...) {
+    arrow::as_arrow_table(climateR.catalogs::read_tds(
+        paste0(
+            "http://thredds.northwestknowledge.net:8080",
+            "/thredds/reacch_climate_MET_aggregated_catalog.html"
+        ),
+        "gridmet"
+    ))
+}
+```
+### Tidy
+
+With our pull function implemented, the next step is to read in the actual catalog information, and align it to
+the catalog schema. This implementation is housed within the data source's `tidy` function. Like the pull function,
+the tidy function should output an Arrow Table. It also should ensure as much of the catalog schema is available on output.
+Moreover, the tidy function has one extra requirement: it must have **at least 1 named parameter** that represents the output
+from the pull function.
+
+Here is the implementation for our tidy function:
+```r
+.tidy_gridmet <- function(.tbl, ...) {
+    dplyr::collect(.tbl) |>
+    dplyr::rowwise() |>
+    dplyr::group_map(~ tryCatch({
+        climateR::read_dap_file(
+            URL     = .x$URL[1],
+            id      = .x$variable[1],
+            varmeta = TRUE
+        )}, error = function(condition) NULL)
+    ) |>
+    dplyr::bind_rows() |>
+    arrow::as_arrow_table() |>
+    dplyr::rename(variable = id) |>
+    dplyr::left_join(dplyr::select(.tbl, -URL), by = "variable") |>
+    dplyr::mutate(tiled = "", type = "opendap") |>
+    dplyr::compute()
+}
+```
+
+### Bringing It Together
+With our `pull` and `tidy` functions defined, we can now create the data source object. Data sources are defined by a single
+file named like `ds-<name>.R` that contains *at least* the data source object.
+Any additional functions or symbols must have names prefixed with a `.`.
+
+> The requirement for private symbols is due to how symbol names are read in during the initialization of the pipeline.
+
+This file is create within the `sources/` directory. So, our GRIDMET file will be `sources/ds-gridmet.R`, and the contents
+will be:
+
+```R
+# sources/ds-gridmet.R
+
+.pull_gridmet <- function(...)       { ... } # implementation as above
+.tidy_gridmet <- function(.tbl, ...) { ... } # implementation as above
+
+ds_gridmet <- climateR.catalogs::data_source$new(
+    id   = "gridmet",
+    pull = .pull_gridmet, # note: we are passing the function, not calling it
+    tidy = .tidy_gridmet
+)
+```
+
+> *Note*: The name of actual R6 object has no restrictions, but typically it will follow a similar pattern of
+> `ds_<name>`. This is the name the `targets` pipeline will use for its derived targets.
+
+With this file implemented, we now have all the necessary components for our pipeline to recognize and run with
+the new catalog data source! The pipeline itself is designed with a *plugin architecture* in mind, meaning that
+sources can be added and removed without modifying the pipeline itself, or the `climateR.catalogs` package.
+
+# Pipeline
+
+The data pipeline for `climateR.catalogs` uses [targets](https://github.com/ropensci/targets).
+`targets` is a Make-like declarative workflow engine written for R in R. `targets` has the advantage
+of easy parallelization, and native support for remote resources.
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+invisible(capture.output({
+    network <- targets::tar_visnetwork(
+        targets_only = TRUE,
+        script = here::here("_targets.R"),
+        outdated = FALSE
+    )
+}))
+
+network[[1]]$nodes <- network[[1]]$nodes |>
+    dplyr::mutate(group = dplyr::case_when(
+        grepl("__", id)      ~ gsub(".*__ds_", "", id),
+        grepl("catalog", id) ~ "catalog",
+        TRUE                 ~ NA
+    ))
+
+network <- visNetwork::visIgraphLayout(
+    graph = network,
+    layout = "layout.circle",
+    type   = "full"
+)
+
+groups  <- unique(network[[1]]$nodes$group)
+network <- visNetwork::visClusteringByGroup(
+    graph  = network,
+    groups = groups[groups != "catalog"],
+    label = "Data Source: ",
+    shape = "database"
+)
+
+network[[1]]$legend <- NULL
+
+network
+```

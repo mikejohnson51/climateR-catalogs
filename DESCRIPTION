@@ -4,20 +4,35 @@ License: MIT
 Imports:
     arrow,
     dplyr,
+    httr,
     glue,
     targets,
+    tarchetypes,
     tidyr,
     terra,
     sf,
     rvest,
     jsonlite,
     logger,
+    lubridate,
+    ncmeta,
     pacman,
     RNetCDF,
     data.table,
     RCurl,
+    readr,
     AOI,
     climateR (>= 0.3.1)
+Suggests:
+    here
 Remotes:
     mikejohnson51/AOI,
     mikejohnson51/climateR
+Roxygen: list(markdown = TRUE, r6 = TRUE)
+RoxygenNote: 7.2.3
+Encoding: UTF-8
+Collate: 
+    'class-data_source.R'
+    'meta-data_source.R'
+    'meta-targets.R'
+    'utils.R'
