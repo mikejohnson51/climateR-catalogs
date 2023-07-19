@@ -5,6 +5,8 @@ library(climateR.catalogs)
 
 # future::plan(future::multicore)
 
+Sys.setenv(CURLOPT_VERBOSE = 1)
+
 # Dynamically load data sources
 lapply(
     list.files(path = here::here("sources/"),
