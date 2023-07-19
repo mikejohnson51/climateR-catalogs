@@ -1,6 +1,6 @@
 .pull_prism_daily <- function(...) {
     arrow::as_arrow_table(climateR::read_dap_file(
-        URL = "http://convection.meas.ncsu.edu:8080/thredds/dodsC/prism/daily/combo/2021/PRISM_combo_20211010.nc#show=fetch",
+        URL = "http://convection.meas.ncsu.edu:8080/thredds/dodsC/prism/daily/combo/2021/PRISM_combo_20211010.nc#log&show=fetch",
         id  = "prism_daily"
     ))
 }

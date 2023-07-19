@@ -1,6 +1,6 @@
 .pull_wus_hsp <- function(...) {
     arrow::as_arrow_table(climateR::read_dap_file(
-        URL = "https://cida.usgs.gov/thredds/dodsC/WUS_HSP/SD_A1B_2040s#show=fetch",
+        URL = "https://cida.usgs.gov/thredds/dodsC/WUS_HSP/SD_A1B_2040s#log&show=fetch",
         id = "WUS_HSP"
     ))
 }
