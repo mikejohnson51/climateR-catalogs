@@ -89,9 +89,13 @@ data_source <- R6::R6Class("data_source",
                 if (..attempts > 2) {
                     targets::tar_throw_run(paste0(
                         private$.id,
-                        ": failed after 3 attempts.\n"
+                        ": failed after 3 attempts.\n  "
                     ), condition)
                 } else {
+                    targets::tar_warn_run(paste0(
+                        private$.id,
+                        ": failed attempt ", ..attempts, "\n  "
+                    ), condition)
                     self$pull(..., ..attempts = ..attempts)
                 }
             })
@@ -118,9 +122,13 @@ data_source <- R6::R6Class("data_source",
                 if (..attempts > 2) {
                     targets::tar_throw_run(paste0(
                         private$.id,
-                        ": failed after 3 attempts.\n"
+                        ": failed after 3 attempts.\n  "
                     ), condition)
                 } else {
+                    targets::tar_warn_run(paste0(
+                        private$.id,
+                        ": failed attempt ", ..attempts, "\n  "
+                    ), condition)
                     self$tidy(..., ..attempts = ..attempts)
                 }
             })
