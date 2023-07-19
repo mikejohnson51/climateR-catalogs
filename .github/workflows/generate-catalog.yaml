@@ -49,7 +49,7 @@ name: Generate Catalog Release
 
 jobs:
   generate-catalog:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     steps:
@@ -69,38 +69,29 @@ jobs:
           http-user-agent: "R/4.3.1/climateR-catalogs"
 
       - name: Install Linux system dependencies
+        if: runner.os == 'Linux'
         run: |
-          sudo apt-get install libcurl4-openssl-dev
-          sudo apt-get install libssl-dev
-          sudo apt-get install libzmq3-dev
-          sudo apt-get install libomp-dev
-
-      - name: Install spatial dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install libudunits2-dev libgdal-dev libgeos-dev libproj-dev
-
-      - name: Install Apache Arrow
-        run: |
-          sudo apt-get update
+          sudo apt-get update -y
+          sudo apt-get install -y libcurl4-openssl-dev libssl-dev libzmq3-dev libomp-dev
+          sudo apt-get install -y libudunits2-dev libgdal-dev libgeos-dev libproj-dev
           sudo apt-get install -y -V ca-certificates lsb-release wget
           wget https://apache.jfrog.io/artifactory/arrow/$(lsb_release --id --short | tr 'A-Z' 'a-z')/apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
           sudo apt-get install -y -V ./apache-arrow-apt-source-latest-$(lsb_release --codename --short).deb
-          sudo apt-get update
+          sudo apt-get update -y
           sudo apt-get install -y -V \
             libarrow-dev libarrow-glib-dev \
             libarrow-dataset-dev libarrow-dataset-glib-dev \
             libparquet-dev libparquet-glib-dev
-
-      - name: Install remaining dependencies
-        run: sudo apt-get install -f
+          sudo apt-get install -f -y
+            
+      - name: Install macOS system dependencies
+        if: runner.os == 'macOS'
+        run: brew update && brew install zeromq gdal geos proj udunits apache-arrow
 
       - name: Setup R enviroment
         uses: r-lib/actions/setup-r-dependencies@v2
-
-      - name: Install climateR.catalogs
-        shell: Rscript {0}
-        run: pak::pkg_install("local::.")
+        with:
+          extra-packages: local::.
 
       - name: Setup EarthData Auth
         shell: Rscript {0}
