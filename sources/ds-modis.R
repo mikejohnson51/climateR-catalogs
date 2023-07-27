@@ -51,7 +51,7 @@
       tile  = ifelse(tile == "", id, tile)
     ) |>
     dplyr::ungroup() |>
-    dplyr::mutate(tmp = paste0(link, tile, ".ncml#fillmismatch"))
+    dplyr::mutate(tmp = paste0(link, tile, ".ncml"))
 
   tmp = dplyr::group_by(modis_collection, id) |>
     dplyr::slice(1) |>
@@ -67,7 +67,7 @@
 
       merge(raw,
             data.frame(
-              climateR:::.resource_time(nc, raw$T_name[1]),
+              climateR:::.resource_time(tmp$tmp[x], raw$T_name[1]),
               asset = tmp$id[x]
             ) ,
             by = 'asset')
@@ -85,17 +85,9 @@
     tidyr::drop_na()
 
   modis_grid = lapply(1:nrow(tmp2), function(x) {
-    nc = tryCatch({
-      RNetCDF::open.nc(tmp2$tmp[x])
-    }, error = function(e) {
-      NULL
-    }, warning = function(w) {
-      NULL
-    })
-
-    raw = if (!is.null(nc)) {
+    raw =
       tryCatch({
-        raw  = climateR:::.resource_grid(nc, X_name = "XDim", Y_name = "YDim")
+        raw  = climateR:::.resource_grid(tmp2$tmp[x], X_name = "XDim", Y_name = "YDim")
         raw$X_name = 'XDim'
         raw$Y_name = "YDim"
         raw$tile = tmp2$tile[x]
@@ -120,12 +112,7 @@
           })
         }
       })
-
-    } else {
-      NULL
-    }
-
-
+    
     message(x)
 
     raw
@@ -144,17 +131,18 @@
   dplyr::left_join(
     dplyr::select(dplyr::bind_rows(modis_data), asset = id, tile),
     dplyr::select(modis_param2, -X_name, -Y_name),
-    by = c("asset")
+    by = c("asset"),
+    relationship = "many-to-many"
   ) |>
     dplyr::left_join(modis_grid2, by = "tile") |>
     dplyr::mutate(
-      crs = proj,
       tiled = "XY",
       type = "opendap",
       URL = paste0(URL, "/", tile, ".ncml")
     ) |>
     tidyr::drop_na() |> 
-    dplyr::mutate(crs = '+proj=sinu +lon_0=0 +x_0=0 +y_0=0 +a=6371007.181 +b=6371007.181 +units=m +no_defs')
+    dplyr::mutate(crs = '+proj=sinu +lon_0=0 +x_0=0 +y_0=0 +a=6371007.181 +b=6371007.181 +units=m +no_defs') |>
+    arrow::as_arrow_table()
 }
 
 # .pull_modis <- function(...) {
