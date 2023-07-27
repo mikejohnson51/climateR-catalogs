@@ -5,7 +5,8 @@ library(climateR.catalogs)
 
 # future::plan(future::multicore)
 
-Sys.setenv(CURLOPT_VERBOSE = 1)
+# Follow 3xx redirects, prevents issues with cida.usgs.gov requests
+Sys.setenv(CURLOPT_FOLLOWLOCATION = 1)
 
 # Dynamically load data sources
 lapply(
