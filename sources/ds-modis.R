@@ -67,7 +67,7 @@
 
       merge(raw,
             data.frame(
-              climateR:::.resource_time(tmp$tmp[x], raw$T_name[1]),
+              climateR::.resource_time(tmp$tmp[x], raw$T_name[1]),
               asset = tmp$id[x]
             ) ,
             by = 'asset')
@@ -87,32 +87,31 @@
   modis_grid = lapply(1:nrow(tmp2), function(x) {
     raw =
       tryCatch({
-        raw  = climateR:::.resource_grid(tmp2$tmp[x], X_name = "XDim", Y_name = "YDim")
+        raw  = climateR:::.resource_grid(tmp2$tmp[x],
+                                         X_name = "XDim",
+                                         Y_name = "YDim")
         raw$X_name = 'XDim'
         raw$Y_name = "YDim"
         raw$tile = tmp2$tile[x]
         raw
       }, error = function(e) {
-        atts <- climateR::dap_xyzv(nc)
-
-        if (nrow(atts) == 0) {
-          NULL
-        } else {
-          X_name <- unique(atts$X_name)
-          Y_name <- unique(atts$Y_name)
-
           tryCatch({
-            raw  = climateR:::.resource_grid(nc, X_name = X_name, Y_name = Y_name)
-            raw$X_name = X_name
-            raw$Y_name = Y_name
+            atts = climateR::dap_xyzv(tmp2$tmp[x])
+            raw  = suppressWarnings({
+              climateR:::.resource_grid(tmp2$tmp[x],
+                                        X_name = atts$X_name[1],
+                                        Y_name = atts$Y_name[1])
+            })
+
+            raw$X_name = atts$X_name[1]
+            raw$Y_name = atts$Y_name[1]
             raw$tile = tmp2$tile[x]
             raw
           }, error = function(e) {
             NULL
           })
-        }
       })
-    
+
     message(x)
 
     raw
@@ -140,14 +139,14 @@
       type = "opendap",
       URL = paste0(URL, "/", tile, ".ncml")
     ) |>
-    tidyr::drop_na() |> 
+    tidyr::drop_na() |>
     dplyr::mutate(crs = '+proj=sinu +lon_0=0 +x_0=0 +y_0=0 +a=6371007.181 +b=6371007.181 +units=m +no_defs') |>
     arrow::as_arrow_table()
 }
 
 # .pull_modis <- function(...) {
 #     url <- "https://opendap.cr.usgs.gov/opendap/hyrax/"
-# 
+#
 #     modis_hyrax <-
 #         dplyr::tibble(
 #             link = rvest::read_html(url) |>
@@ -162,18 +161,18 @@
 #         dplyr::filter(id != ".") |>
 #         dplyr::filter(grepl("MOD", id)) |>
 #         dplyr::filter(id == "MOD14A1.006")
-# 
+#
 #     modis_data <- list()
-# 
+#
 #     for (i in seq_len(nrow(modis_hyrax))) {
 #         modis_data[[i]] <- NULL
-# 
+#
 #         urls <- tryCatch({
 #                 rvest::read_html(modis_hyrax$link[i]) |>
 #                     rvest::html_nodes("a") |>
 #                     rvest::html_attr("href")
 #             }, error = function(e) NULL)
-# 
+#
 #         if (!is.null(urls)) {
 #             modis_data[[i]] <-
 #                 dplyr::tibble(link = urls) |>
@@ -184,10 +183,10 @@
 #                     link = modis_hyrax$link[i]
 #                 )
 #         }
-# 
+#
 #         message(i, " of ", nrow(modis_hyrax))
 #     }
-# 
+#
 #     message("getting modis_collection")
 #     modis_collection <-
 #         dplyr::bind_rows(modis_data) |>
@@ -200,11 +199,11 @@
 #         ) |>
 #         dplyr::ungroup() |>
 #         dplyr::mutate(tmp = paste0(link, tile, ".ncml#fillmismatch"))
-# 
+#
 #     tmp <- dplyr::group_by(modis_collection, id) |>
 #            dplyr::slice(1) |>
 #            dplyr::ungroup()
-# 
+#
 #     message("getting modis_param")
 #     modis_param <- lapply(seq_len(nrow(tmp)), function(x) {
 #         tryCatch({
@@ -213,7 +212,7 @@
 #             raw$id    <- "MODIS"
 #             raw$asset <- tmp$id[x]
 #             raw$tiled <- tmp$tiled[x]
-# 
+#
 #             merge(
 #                 x  = raw,
 #                 y  = data.frame(climateR:::.resource_time(nc, raw$T_name[1]),
@@ -222,22 +221,22 @@
 #             )
 #         }, error = function(e) NULL)
 #     })
-# 
+#
 #     tmp2 <- dplyr::group_by(modis_collection, tile) |>
 #             dplyr::slice(1) |>
 #             dplyr::ungroup() |>
 #             tidyr::drop_na()
-# 
+#
 #     message("getting modis_grid")
 #     modis_grid <- lapply(seq_len(nrow(tmp)), function(x) {
 #         message("modis grid ", x)
-# 
+#
 #         nc <- tryCatch({
 #             RNetCDF::open.nc(tmp2$tmp[x])
 #         }, error = function(e) NULL, warning = function(w) NULL)
-# 
+#
 #         raw <- NULL
-# 
+#
 #         if (!is.null(nc)) {
 #             raw <- tryCatch({
 #                 r <- climateR:::.resource_grid(nc, X_name = "XDim", Y_name = "YDim")
@@ -247,11 +246,11 @@
 #                 r
 #             }, error = function(e) {
 #                 atts <- climateR::dap_xyzv(nc)
-# 
+#
 #                 if (nrow(atts) != 0) {
 #                     X_name <- unique(atts$X_name)
 #                     Y_name <- unique(atts$Y_name)
-# 
+#
 #                     tryCatch({
 #                         r <- climateR:::.resource_grid(nc, X_name = X_name, Y_name = Y_name)
 #                         r$X_name <- X_name
@@ -264,10 +263,10 @@
 #                 }
 #             })
 #         }
-# 
+#
 #         raw
 #     })
-# 
+#
 #     modis_param2 <- dplyr::bind_rows(modis_param) |>
 #                     dplyr::mutate(
 #                         URL = paste0(url, asset),
@@ -275,14 +274,14 @@
 #                         type = "opendap"
 #                     ) |>
 #                     dplyr::select(-X_name, -Y_name)
-# 
+#
 #     modis_grid2 <- dplyr::bind_rows(modis_grid)
-# 
+#
 #     modis_data2 <- dplyr::bind_rows(modis_data) |>
 #                    dplyr::select(asset = id, tile)
-# 
+#
 #     message("modis finishing")
-# 
+#
 #     dplyr::left_join(modis_data2, modis_param2, by = "asset") |>
 #         dplyr::left_join(modis_grid2, by = "tile") |>
 #         dplyr::mutate(
