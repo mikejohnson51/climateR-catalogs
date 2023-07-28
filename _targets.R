@@ -114,9 +114,9 @@ outputs_workflow <- list(
     targets::tar_target(
         catalog_json,
         {
-            jsonlite::write_json(
+            jsonlite::stream_out(
                 catalog$to_data_frame(),
-                "private/catalog.json",
+                file("private/catalog.json"),
                 pretty = TRUE
             )
             "private/catalog.json"
