@@ -110,15 +110,15 @@ jobs:
         run: targets::tar_make()
         shell: Rscript {0}
 
-      - name: Get current date
+      - name: Get current release
         id: date
-        run: echo "{date}={$(date +'%B-%Y')}" >> $GITHUB_STATE
+        run: echo "CURRENT_RELEASE=$(date +'%B-%Y')" >> "$GITHUB_OUTPUT"
 
       - name: Create catalog release
         uses: softprops/action-gh-release@v1
         with:
-          name: climateR Catalogs ${{ env.date }} Release
-          tag_name: ${{ env.date }}
+          name: climateR Catalogs ${{ steps.date.outputs.CURRENT_RELEASE }} Release
+          tag_name: ${{ steps.date.outputs.CURRENT_RELEASE }}
           files: |
             private/catalog.*
             private/errors.json
