@@ -87,10 +87,17 @@ data_source <- R6::R6Class("data_source",
                                 arrow::as_arrow_table()
             }, error = function(condition) {
                 if (..attempts > 2) {
-                    targets::tar_throw_run(paste0(
+                    targets::tar_warn_run(paste0(
                         private$.id,
                         ": failed after 3 attempts.\n  "
                     ), condition)
+
+                    private$.error <- TRUE
+                    private$.error_steps <- dplyr::bind_rows(
+                        private$.error_steps,
+                        data.frame(id = private$.id, step = "pull", error = condition)
+                    )
+                    private$.data  <- arrow::as_arrow_table(data.frame())
                 } else {
                     targets::tar_warn_run(paste0(
                         private$.id,
@@ -120,10 +127,17 @@ data_source <- R6::R6Class("data_source",
                                  arrow::as_arrow_table()
             }, error = function(condition) {
                 if (..attempts > 2) {
-                    targets::tar_throw_run(paste0(
+                    targets::tar_warn_run(paste0(
                         private$.id,
                         ": failed after 3 attempts.\n  "
                     ), condition)
+
+                    private$.error <- TRUE
+                    private$.error_steps <- dplyr::bind_rows(
+                        private$.error_steps,
+                        data.frame(id = private$.id, step = "tidy", error = condition)
+                    )
+                    private$.data  <- arrow::as_arrow_table(data.frame())
                 } else {
                     targets::tar_warn_run(paste0(
                         private$.id,
@@ -211,6 +225,14 @@ data_source <- R6::R6Class("data_source",
             }
 
             return(private$.data)
+        },
+
+        errors = function(value) {
+            if (!missing(value)) {
+                stop("`$errors` is read-only", call. = FALSE)
+            }
+
+            return(private$.error_steps)
         }
     ),
 
@@ -226,6 +248,12 @@ data_source <- R6::R6Class("data_source",
 
         #' @field .tidy (`function`)
         .tidy = NULL,
+
+        #' @field .error (`logical(1)`)
+        .error = FALSE,
+
+        #' @field .error_steps (`data.frame`)
+        .error_steps = data.frame(),
 
         #' @field .finished (`logical(1)`)\cr
         #'  `TRUE` if `$tidy()` has been called

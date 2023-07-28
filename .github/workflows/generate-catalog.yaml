@@ -120,6 +120,7 @@ jobs:
           name: climateR Catalogs ${{ env.date }} Release
           files: |
             private/catalog.*
+            private/errors.json
 
       - name: Prepare failure artifact
         if: failure()

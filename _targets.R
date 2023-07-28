@@ -68,6 +68,14 @@ mapped_workflow <- tarchetypes::tar_map(
             deployment = "worker"
         ),
 
+        targets::tar_target(
+            errors_,
+            `$`(tidy_, errors),
+            format = "rds",
+            memory = "transient",
+            deployment = "worker"
+        ),
+
         # Result Target
         targets::tar_target(
             result_,
@@ -82,6 +90,21 @@ mapped_workflow <- tarchetypes::tar_map(
 # Sub-pipeline for outputting catalog -----------------------------------------
 # -----------------------------------------------------------------------------
 outputs_workflow <- list(
+    # Output Errors JSON
+    targets::tar_target(
+        errors_json,
+        {
+            jsonlite::write_json(
+                errors,
+                "private/errors.json",
+                pretty = TRUE
+            )
+            "private/errors.json"
+        },
+        format = "file",
+        deployment = "main"
+    ),
+
     # Output JSON
     targets::tar_target(
         catalog_json,
@@ -134,6 +157,16 @@ list(
         format = climateR.catalogs::tar_format_arrow_ipc,
         memory = "transient",
         garbage_collection = TRUE,
+        deployment = "main"
+    ),
+
+    tarchetypes::tar_combine(
+        errors,
+        mapped_workflow[[length(mapped_workflow) - 1]],
+        command = dplyr::bind_rows(!!!.x),
+        use_names = FALSE,
+        format = "rds",
+        memory = "transient",
         deployment = "main"
     ),
 
