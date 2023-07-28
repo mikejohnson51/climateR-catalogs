@@ -118,6 +118,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           name: climateR Catalogs ${{ env.date }} Release
+          tag_name: ${{ env.date }}
           files: |
             private/catalog.*
             private/errors.json
