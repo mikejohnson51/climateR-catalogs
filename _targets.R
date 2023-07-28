@@ -29,6 +29,11 @@ targets::tar_option_set(
 logger::log_threshold(logger::DEBUG)
 logger::log_layout(logger::layout_glue_colors)
 
+# Ensure private/ is created for outputs
+if (!dir.exists("private")) {
+    dir.create("private")
+}
+
 exclude <- c() # modify this to exclude data sources, i.e. c("ds_modis")
 
 # -----------------------------------------------------------------------------
