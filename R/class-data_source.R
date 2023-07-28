@@ -95,7 +95,7 @@ data_source <- R6::R6Class("data_source",
                     private$.error <- TRUE
                     private$.error_steps <- dplyr::bind_rows(
                         private$.error_steps,
-                        data.frame(id = private$.id, step = "pull", error = condition)
+                        data.frame(id = private$.id, step = "pull", error = as.character(condition))
                     )
                     private$.data  <- arrow::as_arrow_table(data.frame())
                 } else {
@@ -135,7 +135,7 @@ data_source <- R6::R6Class("data_source",
                     private$.error <- TRUE
                     private$.error_steps <- dplyr::bind_rows(
                         private$.error_steps,
-                        data.frame(id = private$.id, step = "tidy", error = condition)
+                        data.frame(id = private$.id, step = "tidy", error = as.character(condition))
                     )
                     private$.data  <- arrow::as_arrow_table(data.frame())
                 } else {
