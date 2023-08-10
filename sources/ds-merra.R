@@ -1,78 +1,42 @@
 .pull_merra <- function(...) {
-    base <- "https://goldsmr5.gesdisc.eosdis.nasa.gov/opendap/MERRA2/"
+    process_merra = function(base) {
+        URL <- rvest::read_html(base) |>
+            rvest::html_nodes("a") |>
+            rvest::html_attr("href") |>
+            gsub(pattern = "\\.[a-z]*$", replacement = "") |>
+            unique()
 
-    das <- rvest::read_html(base) |>
-           rvest::html_nodes("a")
-    URL <- rvest::html_attr(das, "href") |>
-           gsub(pattern = "\\.[a-z]*$", replacement = "") |>
-           unique()
+        assets <- dirname(URL[grepl("/contents", URL)])
 
-    assets <- dirname(URL[grepl("/contents", URL)])
+        merra <- list()
 
-    merra1 <- list()
-    for (a in seq_along(assets)) {
-        g = expand.grid(
-            asset = assets[a],
-            year = 1980:2023,
-            month = stringr::str_pad(1:12, 2, side = "left", pad = "0")
-        ) |>
-        dplyr::mutate(ext = paste0(base, asset, "/", year, "/", month))
+        for (a in seq_along(assets)) {
+            x = climateR.catalogs::read_tds(paste0(base, assets[a], "/1980/01"),
+                                            id = assets[a],
+                                            append = "") %>%
+                dplyr::filter(grepl(".nc4$", URL)) %>%
+                dplyr::mutate(URL = paste0(gsub("MERRA2", "hyrax", base), link))
 
-        x = climateR.catalogs::read_tds(g$ext[1], id = g$Var1[1], append = "")
-
-        x = dplyr::filter(x, grepl(".nc4$", x$URL)) |>
-            dplyr::mutate(
-                URL = paste0(
-                    "https://goldsmr5.gesdisc.eosdis.nasa.gov/opendap",
-                    link
-                )
-            )
-
-        var = climateR::read_dap_file(x$URL[1], id = "MERRA2")
-
-        merra = list()
-
-        for (i in seq_len(nrow(g))){
-            dates = paste(g$year[i], g$month[i], "01", sep = "-") |>
-                    as.Date()
-
-            files = gsub("19840101", "{date}", unique(basename(var$URL)))
-
-            x2 = data.frame(
-                date = seq.Date(
-                    dates,
-                    by = "day",
-                    length.out = lubridate::days_in_month(dates)
-                )
-            ) |>
+            merra[[a]] = climateR::read_dap_file(x$URL[1], id = "MERRA2") %>%
                 dplyr::mutate(
-                    date2 = gsub("-", "", date),
-                    duration = glue::glue("{date} 01:30:00/{date} 22:30:00"),
-                    URL = glue::glue(files, date = date2),
+                    asset = assets[a],
+                    duration = "1981-01-01 00:00:00/..",
+                    variable = varname,
+                    type = "opendap",
+                    URL = gsub(pattern = "/1980\\/", replacement = "/{YYYY}/", URL) |>
+                        gsub(pattern = "/01\\/", replacement = "/{MM}/", URL) |>
+                        gsub(pattern = "19800101", replacement = "{YYYYMMDD}"),
                     tiled = "T"
                 )
-
-            merra[[i]] = tidyr::crossing(
-                dplyr::select(x2, -date, -date2),
-                dplyr::select(var, -URL, -duration)
-            ) |>
-                dplyr::mutate(URL = paste0(dirname(g$ext[i]), URL))
         }
 
-        merra1[[a]] = data.table::rbindlist(merra) |>
-            dplyr::mutate(variable  = varname, type = "opendap") |>
-            dplyr::mutate(asset = assets[a])
-
-        message(
-            "\tFinished [",
-            assets[a],
-            "] (", a, " of ",
-            length(assets), ")"
-        )
+        dplyr::bind_rows(merra)
     }
 
-    data.table::rbindlist(merra1) |>
-        arrow::as_arrow_table()
+    g5 = process_merra(base = "https://goldsmr5.gesdisc.eosdis.nasa.gov/opendap/MERRA2/")
+    g4 = process_merra(base = "https://goldsmr4.gesdisc.eosdis.nasa.gov/opendap/MERRA2/")
+
+    arrow::as_arrow_table(dplyr::bind_rows(g4, g5))
 }
 
 # ---------------------------------------------------------------------
@@ -85,7 +49,7 @@
 # ---------------------------------------------------------------------
 
 ds_merra <- climateR.catalogs::data_source$new(
-    id   = "merra",
+    id   = "MERRA2",
     pull = .pull_merra,
     tidy = .tidy_merra
 )

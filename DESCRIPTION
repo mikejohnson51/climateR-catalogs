@@ -1,6 +1,14 @@
 Package: climateR.catalogs
 Version: 0.1.0
 License: MIT
+Authors@R: c(person(given = "Mike", 
+                    family = "Johnson", 
+                    role = c("aut", "cre"), 
+                    comment = c(ORCID = "0000-0002-5288-8350"), 
+                    email = "jjohnson@lynker.com"),
+             person("Justin", "Singh", role = c("aut")),
+             person("ESIP", role = c("fnd"))
+Description: A collection of tools for maniputatling hydrologic and hydraulic networks 
 Imports:
     arrow,
     dplyr,
