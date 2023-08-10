@@ -10,25 +10,44 @@
     assets <- dirname(URL[grepl("/contents", URL)])
 
     merra1 <- list()
+
     for (a in seq_along(assets)) {
-        g = expand.grid(
+
+        g = data.frame(
             asset = assets[a],
-            year = 1980:2023,
-            month = stringr::str_pad(1:12, 2, side = "left", pad = "0")
-        ) |>
-        dplyr::mutate(ext = paste0(base, asset, "/", year, "/", month))
+            date = seq.Date(as.Date("1980-01-01"), Sys.Date(), by = "d") ) |>
+        dplyr::mutate(
+            month = format(date, "%m"),
+            year = format(date, "%Y"),
+            ext = paste0(base, asset, "/", year, "/", month)) |>
+        dplyr::distinct(ext, asset)
 
-        x = climateR.catalogs::read_tds(g$ext[1], id = g$Var1[1], append = "")
+        x = climateR.catalogs::read_tds(g$ext[1],
+                                        id = g$asset[1],
+                                        append = "") %>%
+            dplyr::filter(grepl(".nc4$", URL)) %>%
+            mutate(year = g$year[1], month = g$month[1],
+                   day = sprintf("%02s", 1:n()),
+                   date = as.Date(paste(year, month, day, sep = "-"))) %>%
+            mutate(link = gsub(paste0("/", year[1], "/"), "/{YYYY}/", link),
+                   link = gsub(paste0("/",month[1], "/"), "/{MM}/", link),
+                   link = gsub(paste0(year[1], month[1], day[1]), "{YYYYMMDD}", link),
+                   minDate = min(date),
+                   maxDate = max(date)
+                   ) %>%
+            slice(1)
 
-        x = dplyr::filter(x, grepl(".nc4$", x$URL)) |>
+        x =  x |>
             dplyr::mutate(
                 URL = paste0(
-                    "https://goldsmr5.gesdisc.eosdis.nasa.gov/opendap",
+                    "https://goldsmr5.gesdisc.eosdis.nasa.gov/opendap/hyrax/",
                     link
                 )
             )
 
-        var = climateR::read_dap_file(x$URL[1], id = "MERRA2")
+        var = climateR::read_dap_file(
+            glue(x$URL, YYYY = g$year[1], MM = g$month[1], YYYYMMDD = paste0(g$year[1], g$month[1], g$day[1])),
+            id = "MERRA2")
 
         merra = list()
 
@@ -71,7 +90,12 @@
         )
     }
 
-    data.table::rbindlist(merra1) |>
+    xx = data.table::rbindlist(merra1)
+
+
+
+
+
         arrow::as_arrow_table()
 }
 
