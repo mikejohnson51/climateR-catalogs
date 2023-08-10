@@ -33,10 +33,12 @@
         dplyr::bind_rows(merra)
     }
 
+
     g5 = process_merra(base = "https://goldsmr5.gesdisc.eosdis.nasa.gov/opendap/MERRA2/")
     g4 = process_merra(base = "https://goldsmr4.gesdisc.eosdis.nasa.gov/opendap/MERRA2/")
 
     arrow::as_arrow_table(dplyr::bind_rows(g4, g5))
+
 }
 
 # ---------------------------------------------------------------------
