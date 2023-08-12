@@ -274,10 +274,11 @@ data_source <- R6::R6Class("data_source",
 
         .write_metadata = function() {
             private$.data$metadata <- list(
-                id       = private$.id,
-                finished = private$.finished,
-                pull     = private$.encode_func(private$.pull),
-                tidy     = private$.encode_func(private$.tidy)
+                id          = private$.id,
+                finished    = private$.finished,
+                pull        = private$.encode_func(private$.pull),
+                tidy        = private$.encode_func(private$.tidy),
+                error_steps = private$.encode_func(private$.error_steps)
             )
         },
 
@@ -288,9 +289,15 @@ data_source <- R6::R6Class("data_source",
             private$.pull <- private$.decode_func(private$.data$metadata$pull)
             private$.tidy <- private$.decode_func(private$.data$metadata$tidy)
 
-            private$.data$metadata$finished <- NULL
-            private$.data$metadata$pull     <- NULL
-            private$.data$metadata$tidy     <- NULL
+            private$.error_steps <- private$.decode_func(
+                private$.data$metadata$error_steps
+            )
+            private$.error <- nrow(private$.error_steps) > 0
+
+            private$.data$metadata$finished    <- NULL
+            private$.data$metadata$pull        <- NULL
+            private$.data$metadata$tidy        <- NULL
+            private$.data$metadata$error_steps <- NULL
         }
     )
 )

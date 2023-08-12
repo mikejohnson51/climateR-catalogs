@@ -16,6 +16,7 @@ Description: A collection of tools for maniputatling hydrologic and hydraulic ne
 Imports:
     arrow,
     dplyr,
+    here,
     httr,
     glue,
     targets,
@@ -35,8 +36,6 @@ Imports:
     readr,
     AOI,
     climateR (>= 0.3.1)
-Suggests:
-    here
 Remotes:
     mikejohnson51/AOI,
     mikejohnson51/climateR
