@@ -15,9 +15,8 @@
 
 #' @keywords internal
 .tidy_ldas <- function(.tbl, ...) {
-    dplyr::as_tibble(.tbl) |>
+    dplyr::collect(.tbl) |>
         dplyr::mutate(
-            .tbl,
             variable = varname,
             tiled    = "",
             type     = "opendap"
