@@ -116,10 +116,23 @@ outputs_workflow <- list(
         {
             jsonlite::stream_out(
                 catalog$to_data_frame(),
-                file("private/catalog.json"),
-                pretty = TRUE
+                file("private/catalog.json")
             )
             "private/catalog.json"
+        },
+        format = "file",
+        deployment = "main"
+    ),
+
+    # Output GZJSON
+    targets::tar_target(
+        catalog_gzjson,
+        {
+            jsonlite::stream_out(
+                catalog$to_data_frame(),
+                gzfile("private/catalog.json.gz")
+            )
+            "private/catalog.json.gz"
         },
         format = "file",
         deployment = "main"
