@@ -11,8 +11,7 @@
                          gsub('contents.html', "", link))) |>
     dplyr::filter(!grepl("http|4913|opendap|PROTOTYPE", id)) |>
     dplyr::filter(id != ".") |>
-    dplyr::filter(grepl("MOD", id)) |>
-    dplyr::filter(id == "MOD14A1.006")
+    dplyr::filter(grepl("MOD", id))
 
   modis_data = list()
 
