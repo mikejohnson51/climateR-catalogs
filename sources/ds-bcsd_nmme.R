@@ -12,7 +12,7 @@
   stringr::str_match(x$link, '(.*)_(.*)')[, -1] |>
     as.data.frame() |>
     setNames(c("model", "varname")) |>
-    dplyr::bind_rows(x) |>
+    dplyr::bind_cols(x) |>
     tidyr::drop_na() |>
     arrow::as_arrow_table()
 }
