@@ -39,7 +39,7 @@
   dplyr::bind_rows(out) |>
     dplyr::rename(variable = id) |>
     dplyr::bind_cols(dplyr::select(.tbl, "model")) |>
-    dplyr::mutate(tiled = "", type = "opendap") |>
+    dplyr::mutate(tiled = "", type = "opendap", id = "bcsd_nmme") |>
     arrow::as_arrow_table()
 }
 
