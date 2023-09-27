@@ -1,15 +1,14 @@
 #' @keywords internal
 .pull_cfsv2_gridmet <- function(...) {
 
-  xx = paste0("http://thredds.northwestknowledge.net:8080/",
+  paste0("http://thredds.northwestknowledge.net:8080/",
              "thredds/catalog/NWCSC_INTEGRATED_SCENARIOS_ALL_CLIMATE/cfsv2_metdata_90day/",
-             "catalog") |>
+             "catalog.html") |>
     climateR.catalogs::read_tds(id = "cfsv2_gridmet", append = "") |>
     filter(grepl("daily.nc", URL)) |>
     mutate(URL = paste0('http://thredds.northwestknowledge.net:8080/thredds/dodsC/NWCSC_INTEGRATED_SCENARIOS_ALL_CLIMATE/cfsv2_metdata_90day/',
-                        basename(URL)), link = NULL)
-
-    arrow::as_arrow_table(xx)
+                        basename(URL)), link = NULL) |>
+    arrow::as_arrow_table()
 }
 
 #' @keywords internal
@@ -31,7 +30,8 @@
   dplyr::mutate(tiled = "",
                 type = "opendap",
                 ensemble = "median CFS forecast over 48 ensemble members",
-                description = paste("28 day (from today) outlook of mean", gsub("_", " ", varname)),
+                description = paste("28 day (from today) outlook of mean",
+                                    gsub("_", " ", varname)),
                 duration = "../..") |>
   arrow::as_arrow_table()
 }
