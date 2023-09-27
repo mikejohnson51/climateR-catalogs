@@ -12,8 +12,9 @@
     )
 
     year <- 1985:2021
+
     meta <- dplyr::tribble(
-        ~asset,    ~description,
+        ~varname,    ~description,
         "LCPRI",   "primary-landcover",
         "LCSEC",   "secondary-landcover",
         "LCPCONF", "primary-confidence",
@@ -33,14 +34,14 @@
         dplyr::mutate(
             URL = glue::glue(
                 "/vsicurl/{base}/{version}/{description}_{domain2}_year_data/",
-                "LCMAP_{domain}_{year}_{version2}_{asset}/",
-                "LCMAP_{domain}_{year}_{version2}_{asset}.tif"
+                "LCMAP_{domain}_{year}_{version2}_{varname}/",
+                "LCMAP_{domain}_{year}_{version2}_{varname}.tif"
             ),
+            asset = glue::glue("{varname}_{domain}_{year}_{version2}"),
             id          = "LCMAP",
-            type        = "vrt",
-            varname     = description,
+            type        = "tif",
             variable    = description,
-            description = paste(year, gsub("-", " ", description)),
+            description = paste(year, gsub("-", " ", description), domain2, version2),
             units       = "",
             interval    = "1 year",
             nT          = 1,
