@@ -4,3 +4,5 @@
 .Ruserdata
 private/
 _targets/
+.dodsrc
+.urs_cookies
