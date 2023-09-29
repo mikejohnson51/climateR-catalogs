@@ -1,7 +1,7 @@
 #' @keywords internal
 .pull_worldclim_hist <- function(...) {
     df <- data.frame(
-        source   = "WorldClim2.1",
+        id   = "WorldClim2.1",
         tiled    = "T",
         variable = c(
             "tmin",
@@ -35,30 +35,37 @@
         nT       = 12
     ) |>
     dplyr::slice(rep(1:7, each = 12)) |>
-    dplyr::mutate(month = rep(1:7, each = 12), varname = variable)
+    dplyr::mutate(month = rep(1:12, times = 7), varname = variable)
 
-    df1 <- dplyr::mutate(df, id = "wc2.1_10m")
-    df2 <- dplyr::mutate(df, id = "wc2.1_5m")
-    df3 <- dplyr::mutate(df, id = "wc2.1_2.5m")
-    df4 <- dplyr::mutate(df, id = "wc2.1_30s")
+    df1 <- dplyr::mutate(df, model = "wc2.1_10m")
+    df2 <- dplyr::mutate(df, model = "wc2.1_5m")
+    df3 <- dplyr::mutate(df, model = "wc2.1_2.5m")
+    df4 <- dplyr::mutate(df, model = "wc2.1_30s")
 
-    dplyr::bind_rows(df1, df2, df3, df4) |>
+    .tbl = dplyr::bind_rows(df1, df2, df3, df4) |>
         dplyr::mutate(URL = paste0(
             "/vsizip/{/vsicurl/",
             "https://biogeo.ucdavis.edu/data/worldclim/v2.1/base/",
-            id, "_", varname, ".zip}/",
-            id, "_", gsub("BIO", "", varname), "_",
+            model, "_", varname, ".zip}/",
+            model, "_", gsub("BIO", "", varname), "_",
             sprintf("%02d", month), ".tif"
-        )) |>
-        arrow::as_arrow_table()
+        ))
+
+
+    .tbl = dplyr::filter(.tbl, !duplicated(.tbl))|>
+        dplyr::mutate(asset = paste0(sprintf("%02d", month), "_", variable, "_", gsub("wc2.1_", "", model)),
+                      description = paste(month.name[month], description, gsub("wc2.1_", "", model)))
+
+     arrow::as_arrow_table(.tbl)
 }
 
 #' @keywords internal
 .tidy_worldclim_hist <- function(.tbl, ...) {
+
     dep <- dplyr::as_tibble(.tbl) |>
-           dplyr::group_by(id) |>
+           dplyr::group_by(model) |>
            dplyr::slice(1) |>
-           dplyr::select(URL, id) |>
+           dplyr::select(URL, model) |>
            dplyr::ungroup() |>
            dplyr::mutate(
                    X1 = NA,    Xn = NA,
@@ -86,9 +93,10 @@
         dep$crs[i]   <- sf::st_crs(r)$proj4string
     }
 
-    dplyr::left_join(.tbl, dplyr::select(dep, -URL), by = "id") |>
-        dplyr::mutate(type = "VRT", toptobottom = FALSE) |>
-        arrow::as_arrow_table()
+   tbl =  dplyr::left_join(.tbl, dplyr::select(dep, -URL), by = "model") |>
+        dplyr::mutate(type = "VRT", toptobottom = FALSE)
+
+   arrow::as_arrow_table(tbl)
 }
 
 ds_worldclim_hist <- climateR.catalogs::data_source$new(
