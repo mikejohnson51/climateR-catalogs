@@ -54,7 +54,7 @@
 }
 
 
-.pull_erdap <- function(cache_dir = "data-raw", ...) {
+.pull_erddap <- function(cache_dir = "data-raw/erddap", ...) {
     if (!dir.exists(cache_dir)) {
         stop(cache_dir, " does not exist")
     }
@@ -80,9 +80,7 @@
         }, error = function(x) NULL)
     })
 
-    browser()
-
-    message("creating ERDAP table")
+    message("creating ERDDAP table")
 
     Filter(function(path) !is.na(path) && file.exists(path), paths) |>
         lapply(readRDS) |>
@@ -90,15 +88,15 @@
         arrow::as_arrow_table()
 }
 
-.tidy_erdap <- function(.tbl, ...) {
+.tidy_erddap <- function(.tbl, ...) {
     dplyr::as_tibble(.tbl) |>
       dplyr::mutate(type = "erddap") |>
       arrow::as_arrow_table()
 }
 
 
-ds_erdap <- climateR.catalogs::data_source$new(
-    id   = "erdap",
-    pull = .pull_erdap,
-    tidy = .tidy_erdap
+ds_erddap <- climateR.catalogs::data_source$new(
+    id   = "erddap",
+    pull = .pull_erddap,
+    tidy = .tidy_erddap
 )
