@@ -1,6 +1,6 @@
 #' @keywords
 .pull_daymet4 <- function(...) {
-    climateR.catalogs::read_tds(
+   .tbl =  climateR.catalogs::read_tds(
         paste0(
             "https://thredds.daac.ornl.gov",
             "/thredds/catalog/daymet-v4-agg/catalog.html"
@@ -15,6 +15,8 @@
         ) |>
         dplyr::filter(grepl("ncml", URL)) |>
         arrow::as_arrow_table()
+
+   return(.tbl)
 }
 
 #' @keywords internal
@@ -22,7 +24,7 @@
     .tbl <- dplyr::collect(.tbl)
     out  <- list()
 
-    for (i in nrow(.tbl)) {
+    for (i in 1:nrow(.tbl)) {
         out[[i]] <- ncmeta::nc_vars(.tbl$URL[i]) |>
                     dplyr::filter(ndims == 3) |>
                     dplyr::select(variable = name) |>
