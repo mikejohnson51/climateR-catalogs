@@ -28,29 +28,34 @@
     v = v[v$variable == m[1], ]
 
     v$variable = paste0(m[2]," ", m[1], " ", m[3], "-", m[4],  'cm' )
-
+    v$asset = paste0(m[2]," ", m[1])
     v
   }
 
 .pull_polaris <- function(...) {
+
     base <- "http://hydrology.cee.duke.edu/POLARIS/PROPERTIES/v1.0/vrt/"
+
     ids  <- rvest::read_html(base) |>
             rvest::html_nodes("a") |>
             rvest::html_attr("href") |>
             grep(pattern = "vrt$", value = TRUE)
 
     .tbl <- data.frame(URL = paste0("/vsicurl/", base, ids))
+
     ids  <- gsub(".vrt", "", basename(.tbl$URL))
 
     out <- lapply(ids, .parse_polaris_description) |>
            dplyr::bind_rows()
 
-    arrow::as_arrow_table(cbind(.tbl, out))
+    .tbl = arrow::as_arrow_table(cbind(.tbl, out))
+
+    return(.tbl)
 }
 
 .tidy_polaris <- function(.tbl, ...) {
-    dplyr::as_tibble(.tbl) |>
-      dplyr::mutate(type = "vrt", varname = variable, tiled = "") |>
+   plyr::as_tibble(.tbl) |>
+      dplyr::mutate(type = "vrt", tiled = "", varname = variable) |>
       climateR.catalogs::vrt_meta(all = FALSE) |>
       arrow::as_arrow_table()
 }
