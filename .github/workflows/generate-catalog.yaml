@@ -86,7 +86,11 @@ jobs:
             
       - name: Install macOS system dependencies
         if: runner.os == 'macOS'
-        run: brew update && brew install zeromq gdal geos proj udunits apache-arrow
+        run: |
+          brew update
+          // similar to https://github.com/actions/setup-python/issues/577 is happening
+          brew link --overwrite python@3.11
+          brew install zeromq gdal geos proj udunits apache-arrow
 
       - name: Setup R enviroment
         uses: r-lib/actions/setup-r-dependencies@v2
