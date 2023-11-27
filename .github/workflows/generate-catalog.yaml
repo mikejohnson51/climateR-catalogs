@@ -90,7 +90,7 @@ jobs:
           brew update
           # similar to https://github.com/actions/setup-python/issues/577 is happening
           brew install zeromq geos proj udunits apache-arrow
-          brew uninstall python
+          brew uninstall --ignore-dependencies python
           brew install python@3.11
           brew link --overwrite python@3.11
           brew install gdal
