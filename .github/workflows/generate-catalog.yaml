@@ -88,10 +88,8 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           brew update
-          # similar to https://github.com/actions/setup-python/issues/577 is happening
           brew install zeromq geos proj udunits apache-arrow
-          brew uninstall --ignore-dependencies python
-          brew install python@3.11
+          brew install python@3.11 || true
           brew link --overwrite python@3.11
           brew install gdal
           
