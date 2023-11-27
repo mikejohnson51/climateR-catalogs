@@ -14,7 +14,7 @@
     meta = data.frame(do.call(rbind, tmp)) |>
         dplyr::filter(X2 != "nc")
 
-    g1 = expand.grid(models, scenarios[1], unique(meta$X1), unique(readr::parse_number(meta$X2)), KEEP.OUT.ATTRS = TRUE, stringsAsFactors = TRUE)
+    g1 = expand.grid(models, scenarios[1], unique(meta$X1), unique(readr::parse_number(meta$X2)), KEEP.OUT.ATTRS = TRUE, stringsAsFactors = FALSE)
 
     url3 = paste0(url2, "/", scenarios[2], "/")
     result4 <- RCurl::getURL(url3,verbose=TRUE,ftp.use.epsv=TRUE, dirlistonly = TRUE)
@@ -22,7 +22,7 @@
     meta = data.frame(do.call(rbind, tmp)) |>
         dplyr::filter(X2 != "nc")
 
-    g2 = expand.grid(models, scenarios[2:3], unique(meta$X1), unique(readr::parse_number(meta$X2)), KEEP.OUT.ATTRS = TRUE, stringsAsFactors = TRUE)
+    g2 = expand.grid(models, scenarios[2:3], unique(meta$X1), unique(readr::parse_number(meta$X2)), KEEP.OUT.ATTRS = TRUE, stringsAsFactors = FALSE)
 
     g3 = data.frame(rbind(g1, g2)) |>
         dplyr::distinct() |>
