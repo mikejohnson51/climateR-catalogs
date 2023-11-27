@@ -47,8 +47,6 @@
 # ---------------------------------------------------------------------
 #
 
-terra::rast('/vsicurl/ftp://gdo-dcp.ucllnl.org/pub/dcp/archive/cmip5/loca_hydro/LOCA_VIC_dpierce_2017-02-28/ACCESS1-0/vic_output.historical.netcdf/ET.1950.v0.nc')
-
 .tidy_loca_hydro <- function(.tbl, ...) {
     x <- dplyr::as_tibble(.tbl)
 
