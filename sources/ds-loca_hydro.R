@@ -14,7 +14,7 @@
     meta = data.frame(do.call(rbind, tmp)) |>
         dplyr::filter(X2 != "nc")
 
-    g1 = expand.grid(models, scenarios[1], unique(meta$X1), unique(readr::parse_number(meta$X2)))
+    g1 = expand.grid(models, scenarios[1], unique(meta$X1), unique(readr::parse_number(meta$X2)), KEEP.OUT.ATTRS = TRUE, stringsAsFactors = TRUE)
 
     url3 = paste0(url2, "/", scenarios[2], "/")
     result4 <- RCurl::getURL(url3,verbose=TRUE,ftp.use.epsv=TRUE, dirlistonly = TRUE)
@@ -22,7 +22,7 @@
     meta = data.frame(do.call(rbind, tmp)) |>
         dplyr::filter(X2 != "nc")
 
-    g2 = expand.grid(models, scenarios[2:3], unique(meta$X1), unique(readr::parse_number(meta$X2)))
+    g2 = expand.grid(models, scenarios[2:3], unique(meta$X1), unique(readr::parse_number(meta$X2)), KEEP.OUT.ATTRS = TRUE, stringsAsFactors = TRUE)
 
     g3 = data.frame(rbind(g1, g2)) |>
         dplyr::distinct() |>
@@ -30,19 +30,24 @@
 
     names(g3) = c("model", "scenario", "varname", "year")
 
-    dplyr::group_by(g3, model, scenario, varname) |>
+    .tbl = dplyr::group_by(g3, model, scenario, varname) |>
         dplyr::mutate(interval = "1 day", duration = paste0(min(year), "-01-01/", max(year), "-12-31"),
             id = "loca_hydrology",
-            URL = paste0(url, model,"/", scenario, "/", varname, ".{year}.v0.nc"),
+            URL = paste0("/vsicurl/", url, model,"/", scenario, "/", varname, ".{year}.v0.nc"),
             scenario = gsub(".netcdf", "", gsub("vic_output.", "", scenario)),
             type = "ftp", variable = varname, description = varname, toptobottom = FALSE, tiled = "T", T_name = "Time",
             X_name = "Lon", Y_name = "Lat", nT = 365) |>
         dplyr::slice(1) |>
         dplyr::ungroup() |>
         arrow::as_arrow_table()
+
+    return(.tbl)
 }
 
 # ---------------------------------------------------------------------
+#
+
+terra::rast('/vsicurl/ftp://gdo-dcp.ucllnl.org/pub/dcp/archive/cmip5/loca_hydro/LOCA_VIC_dpierce_2017-02-28/ACCESS1-0/vic_output.historical.netcdf/ET.1950.v0.nc')
 
 .tidy_loca_hydro <- function(.tbl, ...) {
     x <- dplyr::as_tibble(.tbl)
