@@ -128,6 +128,20 @@ jobs:
             private/catalog.*
             private/errors.json
 
+      - name: Push catalog to release branch
+        run: |
+          mkdir release/
+          cd release/
+          git init
+          git remote add origin https://github.com/mikejohnson51/climateR-catalogs
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git pull origin release
+          cp ../private/* .
+          git add .
+          git commit -m "climateR Catalogs ${{ steps.date.outputs.CURRENT_RELEASE }} Release"
+          git push -u origin release
+
       - name: Prepare failure artifact
         if: failure()
         run: |
