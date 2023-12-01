@@ -54,7 +54,7 @@
 }
 
 .tidy_polaris <- function(.tbl, ...) {
-   plyr::as_tibble(.tbl) |>
+   dplyr::as_tibble(.tbl) |>
       dplyr::mutate(type = "vrt", tiled = "", varname = variable) |>
       climateR.catalogs::vrt_meta(all = FALSE) |>
       arrow::as_arrow_table()
