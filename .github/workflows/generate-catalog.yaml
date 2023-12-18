@@ -153,55 +153,55 @@ jobs:
           retention-days: 5
           path: .
 
-    upload-catalog:
-      name: Upload Catalog Release
-      runs-on: ubuntu-latest
-      needs: generate-catalog
-      steps:
-        - name: Download Catalog Artifact
-          uses: actions/download-artifact@v4
-          id: catalog_artifact
-          with:
-            name: catalog-artifact
-            path: ${{ runner.temp }}/catalogs
-          
-        - name: Get current release
-          id: date
-          run: echo "CURRENT_RELEASE=$(date +'%B-%Y')" >> "$GITHUB_OUTPUT"
+  upload-catalog:
+    name: Upload Catalog Release
+    runs-on: ubuntu-latest
+    needs: generate-catalog
+    steps:
+      - name: Download Catalog Artifact
+        uses: actions/download-artifact@v4
+        id: catalog_artifact
+        with:
+          name: catalog-artifact
+          path: ${{ runner.temp }}/catalogs
+        
+      - name: Get current release
+        id: date
+        run: echo "CURRENT_RELEASE=$(date +'%B-%Y')" >> "$GITHUB_OUTPUT"
 
-        - name: Create catalog release
-          uses: softprops/action-gh-release@v1
-          with:
-            name: climateR Catalogs ${{ steps.date.outputs.CURRENT_RELEASE }} Release
-            tag_name: ${{ steps.date.outputs.CURRENT_RELEASE }}
-            files: |
-              ${{ steps.catalog_artifact.outputs.download_path }}/catalog.*
-              ${{ steps.catalog_artifact.outputs.download_path }}/errors.json
+      - name: Create catalog release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: climateR Catalogs ${{ steps.date.outputs.CURRENT_RELEASE }} Release
+          tag_name: ${{ steps.date.outputs.CURRENT_RELEASE }}
+          files: |
+            ${{ steps.catalog_artifact.outputs.download_path }}/catalog.*
+            ${{ steps.catalog_artifact.outputs.download_path }}/errors.json
 
-    commit-catalog:
-      name: Commit Catalog to Repo
-      runs-on: ubuntu-latest
-      needs: generate-catalog
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v4
-          with:
-            ref: release
+  commit-catalog:
+    name: Commit Catalog to Repo
+    runs-on: ubuntu-latest
+    needs: generate-catalog
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: release
 
-        - name: Download Catalog Artifact
-          uses: actions/download-artifact@v4
-          id: catalog_artifact
-          with:
-            name: catalog-artifact
+      - name: Download Catalog Artifact
+        uses: actions/download-artifact@v4
+        id: catalog_artifact
+        with:
+          name: catalog-artifact
 
-        - name: Get current release
-          id: date
-          run: echo "CURRENT_RELEASE=$(date +'%B-%Y')" >> "$GITHUB_OUTPUT"
+      - name: Get current release
+        id: date
+        run: echo "CURRENT_RELEASE=$(date +'%B-%Y')" >> "$GITHUB_OUTPUT"
 
-        - name: Push catalog to release branch
-          run: |
-            git config user.name github-actions
-            git config user.email github-actions@github.com
-            git add .
-            git commit -m "climateR Catalogs ${{ steps.date.outputs.CURRENT_RELEASE }} Release"
-            git push -u origin release
+      - name: Push catalog to release branch
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add .
+          git commit -m "climateR Catalogs ${{ steps.date.outputs.CURRENT_RELEASE }} Release"
+          git push -u origin release
