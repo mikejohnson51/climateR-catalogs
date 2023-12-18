@@ -87,9 +87,7 @@ jobs:
       - name: Install macOS system dependencies
         if: runner.os == 'macOS'
         run: |
-          brew update
           brew install --force --overwrite python zeromq gdal geos proj udunits apache-arrow
-          
 
       - name: Setup R enviroment
         uses: r-lib/actions/setup-r-dependencies@v2
