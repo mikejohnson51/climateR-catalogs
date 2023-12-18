@@ -175,8 +175,8 @@ jobs:
           name: climateR Catalogs ${{ steps.date.outputs.CURRENT_RELEASE }} Release
           tag_name: ${{ steps.date.outputs.CURRENT_RELEASE }}
           files: |
-            ${{ steps.catalog_artifact.outputs.download_path }}/catalog.*
-            ${{ steps.catalog_artifact.outputs.download_path }}/errors.json
+            ${{ steps.catalog_artifact.outputs.download-path }}/catalog.*
+            ${{ steps.catalog_artifact.outputs.download-path }}/errors.json
 
   commit-catalog:
     name: Commit Catalog to Repo
