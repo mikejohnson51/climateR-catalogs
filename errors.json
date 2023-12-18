@@ -1,7 +1,1 @@
-[
-  {
-    "id": "polaris",
-    "step": "tidy",
-    "error": "Error in (function (cond) : error in evaluating the argument 'x' in selecting a method for function 'rast': there is no package called ‘plyr’\n"
-  }
-]
+[]
