@@ -48,11 +48,13 @@
 #
 
 .tidy_loca_hydro <- function(.tbl, ...) {
-    x <- dplyr::as_tibble(.tbl) |>
-          dplyr::slice(1) |>
-          dplyr::mutate(URL = glue::glue(URL)) |>
-          dplyr::ungroup() |>
-          dplyr::select(URL, varname)
+    x <- dplyr::as_tibble(.tbl)
+
+    x2 <- dplyr::group_by(x, varname) |>
+           dplyr::slice(1) |>
+           dplyr::mutate(URL = glue::glue(URL)) |>
+           dplyr::ungroup() |>
+           dplyr::select(URL, varname)
 
     for(i in seq_len(nrow(x2))){
         r           = terra::rast(x2$URL[i], lyrs = 1)
