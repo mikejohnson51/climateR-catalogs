@@ -88,9 +88,7 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           brew update
-          brew install python@3.12 || true
-          brew link --overwrite python@3.12
-          brew install zeromq gdal geos proj udunits apache-arrow
+          brew install --force --overwrite python zeromq gdal geos proj udunits apache-arrow
           
 
       - name: Setup R enviroment
