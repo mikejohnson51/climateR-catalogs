@@ -45,7 +45,7 @@ on:
   workflow_dispatch:
     
 
-name: Generate Catalog Release
+name: Generate climateR Catalog
 
 # Used for committing to `release` branch.
 permissions:
@@ -53,12 +53,13 @@ permissions:
 
 jobs:
   generate-catalog:
+    name: Generate Catalog
     runs-on: macos-latest
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # Remove due to an issue with key signing, causes failure
       # when running `apt-get update`. Needed for use with `act`
@@ -115,38 +116,29 @@ jobs:
         run: targets::tar_make()
         shell: Rscript {0}
 
-      - name: Get current release
-        id: date
-        run: echo "CURRENT_RELEASE=$(date +'%B-%Y')" >> "$GITHUB_OUTPUT"
-
-      - name: Create catalog release
-        uses: softprops/action-gh-release@v1
+      - name: Upload catalog artifact
+        uses: actions/upload-artifact@v4
         with:
-          name: climateR Catalogs ${{ steps.date.outputs.CURRENT_RELEASE }} Release
-          tag_name: ${{ steps.date.outputs.CURRENT_RELEASE }}
-          files: |
+          name: catalog-artifact
+          if-no-files-found: error
+          retention-days: 1
+          path: |
             private/catalog.*
             private/errors.json
-
-      - name: Push catalog to release branch
-        run: |
-          mkdir release/
-          cd release/
-          git init
-          git remote add origin https://github.com/mikejohnson51/climateR-catalogs
-          git config --global user.name github-actions
-          git config --global user.email github-actions@github.com
-          git pull origin release
-          git checkout release
-          cp ../private/* .
-          git add .
-          git commit -m "climateR Catalogs ${{ steps.date.outputs.CURRENT_RELEASE }} Release"
-          git push -u origin release
 
       - name: Prepare failure artifact
         if: failure()
         shell: Rscript {0}
         run: |
+          unlink(".git", recursive = TRUE)
+          unlink(".github", recursive = TRUE)
+          
+          if (requireNamespace('climateR', quietly = TRUE)) {
+              unlink(climateR::getNetrcPath())
+              unlink(climateR::getDodsrcPath())
+              unlink(".urs_cookies")
+          }
+
           if (requireNamespace('jsonlite', quietly = TRUE)) {
               cat(jsonlite::toJSON(targets::tar_meta()))
           } else {
@@ -155,7 +147,61 @@ jobs:
 
       - name: Post failure artifact
         if: failure()
-        uses: actions/upload-artifact@main
+        uses: actions/upload-artifact@v4
         with:
-          name: ${{ runner.os }}-r${{ matrix.config.r }}-results
+          name: ${{ runner.os }}-r-${{ github.run_id }}-failure-results
+          retention-days: 5
           path: .
+
+    upload-catalog:
+      name: Upload Catalog Release
+      runs-on: ubuntu-latest
+      needs: generate-catalog
+      steps:
+        - name: Download Catalog Artifact
+          uses: actions/download-artifact@v4
+          id: catalog_artifact
+          with:
+            name: catalog-artifact
+            path: ${{ runner.temp }}/catalogs
+          
+        - name: Get current release
+          id: date
+          run: echo "CURRENT_RELEASE=$(date +'%B-%Y')" >> "$GITHUB_OUTPUT"
+
+        - name: Create catalog release
+          uses: softprops/action-gh-release@v1
+          with:
+            name: climateR Catalogs ${{ steps.date.outputs.CURRENT_RELEASE }} Release
+            tag_name: ${{ steps.date.outputs.CURRENT_RELEASE }}
+            files: |
+              ${{ steps.catalog_artifact.outputs.download_path }}/catalog.*
+              ${{ steps.catalog_artifact.outputs.download_path }}/errors.json
+
+    commit-catalog:
+      name: Commit Catalog to Repo
+      runs-on: ubuntu-latest
+      needs: generate-catalog
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+          with:
+            ref: release
+
+        - name: Download Catalog Artifact
+          uses: actions/download-artifact@v4
+          id: catalog_artifact
+          with:
+            name: catalog-artifact
+
+        - name: Get current release
+          id: date
+          run: echo "CURRENT_RELEASE=$(date +'%B-%Y')" >> "$GITHUB_OUTPUT"
+
+        - name: Push catalog to release branch
+          run: |
+            git config user.name github-actions
+            git config user.email github-actions@github.com
+            git add .
+            git commit -m "climateR Catalogs ${{ steps.date.outputs.CURRENT_RELEASE }} Release"
+            git push -u origin release
