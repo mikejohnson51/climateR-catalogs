@@ -88,8 +88,8 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           brew update
-          brew install python@3.11 || true
-          brew link --overwrite python@3.11
+          brew install python@3.12 || true
+          brew link --overwrite python@3.12
           brew install zeromq gdal geos proj udunits apache-arrow
           
 
