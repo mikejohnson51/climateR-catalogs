@@ -1,26 +1,33 @@
 #' @keywords internal
 .pull_terraclim <- function(...) {
-    arrow::as_arrow_table(climateR.catalogs::read_tds(
+    .tbl = arrow::as_arrow_table(climateR.catalogs::read_tds(
         paste0(
             "http://thredds.northwestknowledge.net:8080",
             "/thredds/terraclimate_aggregated.html"
         ),
         "terraclim"
     ))
+
+    return(.tbl)
 }
 
 #' @keywords internal
 .tidy_terraclim <- function(.tbl, ...) {
-    dplyr::collect(.tbl) |>
-        tidyr::separate_wider_delim(
+   .tbl = dplyr::collect(.tbl) |>
+         dplyr::mutate(link = gsub("-", "_", link),
+                      URL = gsub("-", "_", URL)) |>
+         tidyr::separate_wider_delim(
             cols    = "link",
             names   = c(NA, NA, "variable", NA, NA, NA),
             delim   = "_",
             too_few = "align_end"
         ) |>
+        climateR::variable_meta() |>
         climateR::dap_meta() |>
         dplyr::mutate(tiled = "", type = "opendap") |>
         arrow::as_arrow_table()
+
+   return(.tbl)
 }
 
 #' TerraClimate Data Source

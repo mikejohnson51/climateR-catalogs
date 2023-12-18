@@ -48,9 +48,7 @@
 #
 
 .tidy_loca_hydro <- function(.tbl, ...) {
-    x <- dplyr::as_tibble(.tbl)
-
-    x2 <- dplyr::group_by(x, varname) |>
+    x <- dplyr::as_tibble(.tbl) |>
           dplyr::slice(1) |>
           dplyr::mutate(URL = glue::glue(URL)) |>
           dplyr::ungroup() |>

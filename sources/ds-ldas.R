@@ -1,6 +1,6 @@
 #' @keywords internal
 .pull_ldas <- function(...) {
-    rvest::read_html("https://hydro1.gesdisc.eosdis.nasa.gov/dods/") |>
+   .tbl =  rvest::read_html("https://hydro1.gesdisc.eosdis.nasa.gov/dods/") |>
         rvest::html_nodes("a") |>
         rvest::html_attr("href") |>
         gsub(pattern = "\\.[a-z]*$", replacement = "") |>
@@ -11,11 +11,13 @@
         }) |>
         dplyr::bind_rows() |>
         arrow::as_arrow_table()
+
+   return(.tbl)
 }
 
 #' @keywords internal
 .tidy_ldas <- function(.tbl, ...) {
-    dplyr::collect(.tbl) |>
+    .tbl = dplyr::collect(.tbl) |>
         dplyr::mutate(
             variable = varname,
             tiled    = "",
@@ -28,6 +30,8 @@
             too_many = "merge"
         ) |>
         arrow::as_arrow_table()
+
+    return(.tbl)
 }
 
 #' LDAS Data Source

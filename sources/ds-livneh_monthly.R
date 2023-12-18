@@ -20,8 +20,10 @@
         "livneh_NAmerExt_15Oct2014.{tmp$ym}.mon.nc"
     )
 
-    climateR::read_dap_file(urls[2], varname = NULL, id = "Livneh_monthly") |>
+    .tbl = climateR::read_dap_file(urls[2], varname = NULL, id = "Livneh_monthly") |>
         arrow::as_arrow_table()
+
+    return(.tbl)
 }
 
 # ---------------------------------------------------------------------
