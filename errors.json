@@ -1,7 +1,1 @@
-[
-  {
-    "id": "worldclim_hist",
-    "step": "tidy",
-    "error": "Error in h(simpleError(msg, call)): error in evaluating the argument 'x' in selecting a method for function 'xmin': object 'r' not found\n"
-  }
-]
+[]
