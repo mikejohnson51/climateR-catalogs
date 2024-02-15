@@ -11,7 +11,8 @@
         "HI",    "hawaii", "version_10", "V10"
     )
 
-    year <- 1985:2021
+    conus_year <- 1985:2021
+    hi_year <- 2000:2021
 
     meta <- dplyr::tribble(
         ~varname,    ~description,
@@ -27,10 +28,18 @@
         "SCMQA",   "model-quality"
     )
 
-    merge(df, year) |>
+    conus = merge(df, conus_year) |>
+        dplyr::filter(domain2 == "conus") |>
         dplyr::rename(year = y) |>
-        dplyr::arrange(domain) |>
+        merge(meta)
+
+    all = merge(df, hi_year) |>
+        dplyr::filter(domain2 == "hawaii") |>
+        dplyr::rename(year = y) |>
         merge(meta) |>
+        dplyr::bind_rows(conus)
+
+    .tbl = all  |>
         dplyr::mutate(
             URL = glue::glue(
                 "/vsicurl/{base}/{version}/{description}_{domain2}_year_data/",
@@ -49,13 +58,23 @@
             duration    = paste0(year, "-01-01/", year, "-12-31")
         ) |>
         arrow::as_arrow_table()
+
+    return(.tbl)
 }
 
 # ---------------------------------------------------------------------
 
 .tidy_lcmap <- function(.tbl, ...) {
-    dplyr::as_tibble(.tbl) |>
-        climateR.catalogs::vrt_meta(all = FALSE) |>
+
+    .tbl = dplyr::as_tibble(.tbl)
+
+    .tbl |>
+        dplyr::group_by(domain) |>
+        dplyr::slice(1) |>
+        dplyr::ungroup() |>
+        climateR.catalogs::vrt_meta() |>
+        dplyr::select(-c(names(.tbl)[2:ncol(.tbl)])) |>
+        dplyr::right_join(.tbl) |>
         arrow::as_arrow_table()
 }
 
