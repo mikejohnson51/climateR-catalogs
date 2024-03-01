@@ -1,1 +1,12 @@
-[]
+[
+  {
+    "id": "ldas",
+    "step": "pull",
+    "error": "Error in h(simpleError(msg, call)): error in evaluating the argument 'y' in selecting a method for function 'merge': Bad argument (udunits)\n"
+  },
+  {
+    "id": "ldas",
+    "step": "tidy",
+    "error": "Error in `dplyr::mutate()`:\nℹ In argument: `variable = varname`.\nCaused by error:\n! object 'varname' not found\n"
+  }
+]
