@@ -27,6 +27,7 @@
     dplyr::mutate(tiled = "T", type = "opendap", BAD = NULL,
                   varname = gsub("GISS-AOM", "GISS_AOM", varname),
                   varname = gsub("HST_HST", "HST", varname),
+                  scenario = ifelse(scenario == "HST", 'historical', scenario),
                   model = gsub("GISS-AOM", "GISS_AOM", model)) |>
     arrow::as_arrow_table()
 
