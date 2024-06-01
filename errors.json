@@ -1,12 +1,117 @@
 [
   {
-    "id": "ldas",
+    "id": "bcca",
     "step": "pull",
-    "error": "Error in h(simpleError(msg, call)): error in evaluating the argument 'y' in selecting a method for function 'merge': Bad argument (udunits)\n"
+    "error": "Error in open.nc(URL): NetCDF: Malformed or inaccessible DAP2 DDS or DAP4 DMR response\n"
   },
   {
-    "id": "ldas",
+    "id": "bcca",
+    "step": "tidy",
+    "error": "Error in `tidyr::separate_wider_delim()`:\n! Can't select columns that don't exist.\n✖ Column `varname` doesn't exist.\n"
+  },
+  {
+    "id": "bcsd",
+    "step": "pull",
+    "error": "Error in open.nc(URL): NetCDF: Malformed or inaccessible DAP2 DDS or DAP4 DMR response\n"
+  },
+  {
+    "id": "bcsd",
+    "step": "tidy",
+    "error": "Error in `dplyr::rename()`:\n! Can't rename columns that don't exist.\n✖ Column `varname` doesn't exist.\n"
+  },
+  {
+    "id": "bcsd_vic",
+    "step": "pull",
+    "error": "Error in open.nc(URL): NetCDF: Malformed or inaccessible DAP2 DDS or DAP4 DMR response\n"
+  },
+  {
+    "id": "bcsd_vic",
+    "step": "tidy",
+    "error": "Error in `tidyr::separate_wider_delim()`:\n! Can't select columns that don't exist.\n✖ Column `varname` doesn't exist.\n"
+  },
+  {
+    "id": "cabcm",
+    "step": "pull",
+    "error": "Error in open.nc(URL): NetCDF: Malformed or inaccessible DAP2 DDS or DAP4 DMR response\n"
+  },
+  {
+    "id": "cabcm",
+    "step": "tidy",
+    "error": "Error in `dplyr::mutate()`:\nℹ In argument: `varname = gsub(\"HST_\", \"HST_HST_\", varname)`.\nCaused by error:\n! object 'varname' not found\n"
+  },
+  {
+    "id": "dcp",
+    "step": "pull",
+    "error": "Error in open.nc(URL): NetCDF: Malformed or inaccessible DAP2 DDS or DAP4 DMR response\n"
+  },
+  {
+    "id": "dcp",
+    "step": "tidy",
+    "error": "Error in `tidyr::separate_wider_delim()`:\n! Can't select columns that don't exist.\n✖ Column `varname` doesn't exist.\n"
+  },
+  {
+    "id": "loca",
+    "step": "pull",
+    "error": "Error in open.nc(URL): NetCDF: Malformed or inaccessible DAP2 DDS or DAP4 DMR response\n"
+  },
+  {
+    "id": "loca",
+    "step": "tidy",
+    "error": "Error in `tidyr::separate_wider_delim()`:\n! Can't select columns that don't exist.\n✖ Column `varname` doesn't exist.\n"
+  },
+  {
+    "id": "maurer",
+    "step": "pull",
+    "error": "Error in open.nc(URL): NetCDF: Malformed or inaccessible DAP2 DDS or DAP4 DMR response\n"
+  },
+  {
+    "id": "maurer",
+    "step": "tidy",
+    "error": "Error in `tidyr::separate_wider_delim()`:\n! Can't select columns that don't exist.\n✖ Column `varname` doesn't exist.\n"
+  },
+  {
+    "id": "prism_monthly",
+    "step": "pull",
+    "error": "Error in open.nc(URL): NetCDF: Malformed or inaccessible DAP2 DDS or DAP4 DMR response\n"
+  },
+  {
+    "id": "prism_monthly",
     "step": "tidy",
     "error": "Error in `dplyr::mutate()`:\nℹ In argument: `variable = varname`.\nCaused by error:\n! object 'varname' not found\n"
+  },
+  {
+    "id": "ssebopeta",
+    "step": "pull",
+    "error": "Error in open.nc(URL): NetCDF: Malformed or inaccessible DAP2 DDS or DAP4 DMR response\n"
+  },
+  {
+    "id": "ssebopeta",
+    "step": "tidy",
+    "error": "Error in do.call(rbind, res): second argument must be a list\n"
+  },
+  {
+    "id": "topowx",
+    "step": "pull",
+    "error": "Error in open.nc(URL): NetCDF: Malformed or inaccessible DAP2 DDS or DAP4 DMR response\n"
+  },
+  {
+    "id": "topowx",
+    "step": "tidy",
+    "error": "Error in `dplyr::mutate()`:\nℹ In argument: `variable = varname`.\nCaused by error:\n! object 'varname' not found\n"
+  },
+  {
+    "id": "worldclim_hist",
+    "step": "tidy",
+    "error": "Error in h(simpleError(msg, call)): error in evaluating the argument 'x' in selecting a method for function 'xmin': object 'r' not found\n"
+  },
+  {
+    "id": "WUS_HSP",
+    "step": "pull",
+    "error": "Error in open.nc(URL): NetCDF: Malformed or inaccessible DAP2 DDS or DAP4 DMR response\n"
+  },
+  {
+    "id": "WUS_HSP",
+    "step": "tidy",
+    "error": "Error in `tidyr::separate_wider_delim()`:\n! Can't select columns that don't exist.\n✖ Column `varname` doesn't exist.\n"
   }
 ]
