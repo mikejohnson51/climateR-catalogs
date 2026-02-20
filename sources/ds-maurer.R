@@ -1,6 +1,6 @@
 .pull_maurer <- function(...) {
-    arrow::as_arrow_table(climateR::read_dap_file(
-        URL = "https://cida.usgs.gov/thredds/dodsC/maurer/maurer_brekke_w_meta.ncml",
+    arrow::as_arrow_table(climateR.catalogs::read_stac_collection(
+        url = "https://api.water.usgs.gov:443/gdp/pygeoapi/stac/stac-collection/maurer",
         id  = "maurer"
     ))
 }
@@ -14,7 +14,7 @@
             too_many = "merge",
             cols_remove = FALSE
         ) |>
-        dplyr::mutate(tiled = "", type = "opendap")
+        dplyr::mutate(tiled = "", type = "zarr")
 }
 
 ds_maurer <- climateR.catalogs::data_source$new(

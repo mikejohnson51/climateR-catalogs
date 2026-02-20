@@ -1,24 +1,14 @@
-.pull_dcp <- function(...) {
-    arrow::as_arrow_table(climateR::read_dap_file(
-        URL = "https://cida.usgs.gov/thredds/dodsC/dcp/conus_t",
-        id  = "dcp"
-    ))
-}
+# DEFERRED: dcp_compressed STAC collection has no cube:variables and no zarr store.
+# Only netcdf files on S3 (s3://mdmf/gdp/netcdf/dcp_compressed/).
+# The old cida.usgs.gov THREDDS endpoint is retired.
+# To re-enable, either:
+#   1. Add cube:variables to the STAC metadata upstream, or
+#   2. Parse netcdf files directly from S3
 
-.tidy_dcp <- function(.tbl, ...) {
-    dplyr::as_tibble(.tbl) |>
-        tidyr::separate_wider_delim(
-            cols        = "varname",
-            names       = c("model", "scenario", "variable", NA, NA),
-            delim       = "_",
-            too_few     = "align_end",
-            cols_remove = FALSE
-        ) |>
-        dplyr::mutate(variable = varname, tiled = "", type = "opendap")
-}
-
-ds_dcp <- climateR.catalogs::data_source$new(
-    id   = "dcp",
-    pull = .pull_dcp,
-    tidy = .tidy_dcp
-)
+# .pull_dcp <- function(...) { ... }
+# .tidy_dcp <- function(.tbl, ...) { ... }
+# ds_dcp <- climateR.catalogs::data_source$new(
+#     id   = "dcp",
+#     pull = .pull_dcp,
+#     tidy = .tidy_dcp
+# )

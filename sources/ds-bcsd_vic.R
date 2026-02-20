@@ -1,7 +1,7 @@
 .pull_bcsd_vic <- function(...) {
-    arrow::as_arrow_table(climateR::read_dap_file(
-        URL = "https://cida.usgs.gov/thredds/dodsC/BCSD_mon_VIC",
-        id = "bcsd_vic"
+    arrow::as_arrow_table(climateR.catalogs::read_stac_collection(
+        url = "https://api.water.usgs.gov:443/gdp/pygeoapi/stac/stac-collection/bcsd_mon_vic",
+        id  = "bcsd_vic"
     ))
 }
 
@@ -14,7 +14,7 @@
             too_many    = "merge",
             cols_remove = FALSE
         ) |>
-        dplyr::mutate(tiled = "", type = "opendap") |>
+        dplyr::mutate(tiled = "", type = "zarr") |>
         arrow::as_arrow_table()
 }
 
