@@ -31,6 +31,10 @@ only useful for reading from IPC.
 
 \item{\code{.tidy}}{(\code{function})}
 
+\item{\code{.error}}{(\code{logical(1)})}
+
+\item{\code{.error_steps}}{(\code{data.frame})}
+
 \item{\code{.finished}}{(\code{logical(1)})\cr
 \code{TRUE} if \verb{$tidy()} has been called
 successfully, otherwise \code{FALSE}.}
@@ -54,6 +58,10 @@ Result of this data source after \verb{$tidy()} is called.
 \item{\code{.pull}}{(\code{function})}
 
 \item{\code{.tidy}}{(\code{function})}
+
+\item{\code{.error}}{(\code{logical(1)})}
+
+\item{\code{.error_steps}}{(\code{data.frame})}
 
 \item{\code{.finished}}{(\code{logical(1)})\cr
 \code{TRUE} if \verb{$tidy()} has been called
@@ -125,7 +133,7 @@ Pull a catalog data source from its endpoint.
 
 This method is user-defined at object creation.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{data_source$pull(...)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{data_source$pull(..., ..attempts)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -143,7 +151,7 @@ User-defined parameters that may be used.}
 \subsection{Method \code{tidy()}}{
 Tidy a raw catalog data source into the catalog schema.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{data_source$tidy(...)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{data_source$tidy(..., ..attempts)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{

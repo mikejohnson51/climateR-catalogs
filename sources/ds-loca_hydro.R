@@ -1,15 +1,16 @@
 .pull_loca_hydro <- function(...) {
-    url <- "ftp://gdo-dcp.ucllnl.org/pub/dcp/archive/cmip5/loca_hydro/LOCA_VIC_dpierce_2017-02-28/"
-    result <- RCurl::getURL(url,verbose=TRUE,ftp.use.epsv=TRUE, dirlistonly = TRUE)
+    url <- "ftp://gdo-dcp.llnl.gov/dcp/archive/cmip5/loca_hydro/LOCA_VIC_dpierce_2017-02-28/"
+    result <- RCurl::getURL(url, ftp.use.epsv = FALSE, dirlistonly = TRUE, verbose = FALSE)
+
 
     models = strsplit(result, "\\n")[[1]]
 
     url2 = paste0(url, models[1], "/")
-    result2 <- RCurl::getURL(url2,verbose=TRUE,ftp.use.epsv=TRUE, dirlistonly = TRUE)
+    result2 <- RCurl::getURL(url2, ftp.use.epsv=FALSE, dirlistonly = TRUE)
     scenarios = strsplit(result2, "\\n")[[1]]
 
     url3 = paste0(url2, "/", scenarios[1], "/")
-    result3 <- RCurl::getURL(url3,verbose=TRUE,ftp.use.epsv=TRUE, dirlistonly = TRUE)
+    result3 <- RCurl::getURL(url3, ftp.use.epsv=FALSE, dirlistonly = TRUE)
     tmp = strsplit(strsplit(result3, "\\n")[[1]], "\\.")
     meta = data.frame(do.call(rbind, tmp)) |>
         dplyr::filter(X2 != "nc")
@@ -17,7 +18,7 @@
     g1 = expand.grid(models, scenarios[1], unique(meta$X1), unique(readr::parse_number(meta$X2)), KEEP.OUT.ATTRS = TRUE, stringsAsFactors = FALSE)
 
     url3 = paste0(url2, "/", scenarios[2], "/")
-    result4 <- RCurl::getURL(url3,verbose=TRUE,ftp.use.epsv=TRUE, dirlistonly = TRUE)
+    result4 <- RCurl::getURL(url3, ftp.use.epsv=FALSE, dirlistonly = TRUE)
     tmp = strsplit(strsplit(result4, "\\n")[[1]], "\\.")
     meta = data.frame(do.call(rbind, tmp)) |>
         dplyr::filter(X2 != "nc")
