@@ -1,101 +1,46 @@
 [
   {
-    "id": "bcca",
+    "id": "daymet4",
     "step": "pull",
-    "error": "Error in open.nc(URL): NetCDF: Malformed or inaccessible DAP2 DDS or DAP4 DMR response\n"
+    "error": "Error in open.connection(x, \"rb\"): cannot open the connection\n"
   },
   {
-    "id": "bcca",
+    "id": "daymet4",
     "step": "tidy",
-    "error": "Error in `tidyr::separate_wider_delim()`:\n! Can't select columns that don't exist.\n✖ Column `varname` doesn't exist.\n"
+    "error": "Error in UseMethod(\"nc_vars\"): no applicable method for 'nc_vars' applied to an object of class \"NULL\"\n"
   },
   {
-    "id": "bcsd",
+    "id": "ldas",
     "step": "pull",
-    "error": "Error in open.nc(URL): NetCDF: Malformed or inaccessible DAP2 DDS or DAP4 DMR response\n"
+    "error": "Error in h(simpleError(msg, call)): error in evaluating the argument 'x' in selecting a method for function 'unique': cannot open the connection\n"
   },
   {
-    "id": "bcsd",
-    "step": "tidy",
-    "error": "Error in `dplyr::rename()`:\n! Can't rename columns that don't exist.\n✖ Column `varname` doesn't exist.\n"
-  },
-  {
-    "id": "bcsd_vic",
-    "step": "pull",
-    "error": "Error in open.nc(URL): NetCDF: Malformed or inaccessible DAP2 DDS or DAP4 DMR response\n"
-  },
-  {
-    "id": "bcsd_vic",
-    "step": "tidy",
-    "error": "Error in `tidyr::separate_wider_delim()`:\n! Can't select columns that don't exist.\n✖ Column `varname` doesn't exist.\n"
-  },
-  {
-    "id": "cabcm",
-    "step": "pull",
-    "error": "Error in open.nc(URL): NetCDF: Malformed or inaccessible DAP2 DDS or DAP4 DMR response\n"
-  },
-  {
-    "id": "cabcm",
-    "step": "tidy",
-    "error": "Error in `dplyr::mutate()`:\nℹ In argument: `varname = gsub(\"HST_\", \"HST_HST_\", varname)`.\nCaused by error:\n! object 'varname' not found\n"
-  },
-  {
-    "id": "dcp",
-    "step": "pull",
-    "error": "Error in open.nc(URL): NetCDF: Malformed or inaccessible DAP2 DDS or DAP4 DMR response\n"
-  },
-  {
-    "id": "dcp",
-    "step": "tidy",
-    "error": "Error in `tidyr::separate_wider_delim()`:\n! Can't select columns that don't exist.\n✖ Column `varname` doesn't exist.\n"
-  },
-  {
-    "id": "loca",
-    "step": "pull",
-    "error": "Error in open.nc(URL): NetCDF: Malformed or inaccessible DAP2 DDS or DAP4 DMR response\n"
-  },
-  {
-    "id": "loca",
-    "step": "tidy",
-    "error": "Error in `tidyr::separate_wider_delim()`:\n! Can't select columns that don't exist.\n✖ Column `varname` doesn't exist.\n"
-  },
-  {
-    "id": "maurer",
-    "step": "pull",
-    "error": "Error in open.nc(URL): NetCDF: Malformed or inaccessible DAP2 DDS or DAP4 DMR response\n"
-  },
-  {
-    "id": "maurer",
-    "step": "tidy",
-    "error": "Error in `tidyr::separate_wider_delim()`:\n! Can't select columns that don't exist.\n✖ Column `varname` doesn't exist.\n"
-  },
-  {
-    "id": "prism_monthly",
-    "step": "pull",
-    "error": "Error in open.nc(URL): NetCDF: Malformed or inaccessible DAP2 DDS or DAP4 DMR response\n"
-  },
-  {
-    "id": "prism_monthly",
+    "id": "ldas",
     "step": "tidy",
     "error": "Error in `dplyr::mutate()`:\nℹ In argument: `variable = varname`.\nCaused by error:\n! object 'varname' not found\n"
   },
   {
-    "id": "ssebopeta",
-    "step": "pull",
-    "error": "Error in open.nc(URL): NetCDF: Malformed or inaccessible DAP2 DDS or DAP4 DMR response\n"
-  },
-  {
-    "id": "ssebopeta",
+    "id": "loca_hydro",
     "step": "tidy",
-    "error": "Error in do.call(rbind, res): second argument must be a list\n"
+    "error": "Error: [rast] file does not exist: /vsicurl/ftp://gdo-dcp.llnl.gov/dcp/archive/cmip5/loca_hydro/LOCA_VIC_dpierce_2017-02-28/ACCESS1-0/vic_output.historical.netcdf/ET.1950.v0.nc\n"
   },
   {
-    "id": "topowx",
+    "id": "MERRA2",
     "step": "pull",
-    "error": "Error in open.nc(URL): NetCDF: Malformed or inaccessible DAP2 DDS or DAP4 DMR response\n"
+    "error": "Error in h(simpleError(msg, call)): error in evaluating the argument 'y' in selecting a method for function 'merge': NetCDF: Access failure\n"
   },
   {
-    "id": "topowx",
+    "id": "modis",
+    "step": "pull",
+    "error": "Error in open.connection(x, \"rb\"): cannot open the connection\n"
+  },
+  {
+    "id": "prism_daily",
+    "step": "pull",
+    "error": "Error in open.nc(URL): NetCDF: I/O failure\n"
+  },
+  {
+    "id": "prism_daily",
     "step": "tidy",
     "error": "Error in `dplyr::mutate()`:\nℹ In argument: `variable = varname`.\nCaused by error:\n! object 'varname' not found\n"
   },
@@ -103,15 +48,5 @@
     "id": "worldclim_hist",
     "step": "tidy",
     "error": "Error in h(simpleError(msg, call)): error in evaluating the argument 'x' in selecting a method for function 'xmin': object 'r' not found\n"
-  },
-  {
-    "id": "WUS_HSP",
-    "step": "pull",
-    "error": "Error in open.nc(URL): NetCDF: Malformed or inaccessible DAP2 DDS or DAP4 DMR response\n"
-  },
-  {
-    "id": "WUS_HSP",
-    "step": "tidy",
-    "error": "Error in `tidyr::separate_wider_delim()`:\n! Can't select columns that don't exist.\n✖ Column `varname` doesn't exist.\n"
   }
 ]
