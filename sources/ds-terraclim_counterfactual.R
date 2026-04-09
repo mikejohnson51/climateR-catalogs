@@ -1,17 +1,17 @@
 #' @keywords internal
-.pull_terraclim_normals <- function(...) {
+.pull_terraclim_counterfactual <- function(...) {
     arrow::as_arrow_table(climateR.catalogs::read_tds(
         paste0(
             "http://thredds.northwestknowledge.net:8080",
-            "/thredds/catalog/TERRACLIMATE_ALL/climatology/catalog.html"
+            "/thredds/catalog/TERRACLIMATE_ALL/counterfactual/catalog.html"
         ),
-        "terraclim_normals",
+        "terraclim_counterfactual",
         ""
     ))
 }
 
 #' @keywords internal
-.tidy_terraclim_normals <- function(.tbl, ...) {
+.tidy_terraclim_counterfactual <- function(.tbl, ...) {
     dplyr::collect(.tbl) |>
         dplyr::mutate(
             URL = paste0("http://thredds.northwestknowledge.net:8080",
@@ -19,25 +19,24 @@
                          gsub("_SCAN", "", link)),
             link2 = gsub("\\.nc$", "", basename(link))
         ) |>
-        dplyr::filter(link2 != "climatology") |>
+        dplyr::filter(grepl("^TerraClimate_counterfactual_", link2)) |>
         tidyr::separate_wider_delim(
             cols  = "link2",
-            names = c(NA, "scenario", "variable"),
+            names = c(NA, NA, "variable", NA),
             delim = "_"
         ) |>
-        dplyr::filter(!is.na(variable)) |>
+        dplyr::mutate(scenario = "counterfactual") |>
         climateR::dap_meta() |>
         dplyr::mutate(
-            tiled    = "",
-            interval = "1 month",
-            type     = "opendap"
+            tiled = "",
+            type  = "opendap"
         ) |>
         arrow::as_arrow_table()
 }
 
-#' TerraClimate Normals Data Source
-ds_terraclim_normals <- climateR.catalogs::data_source$new(
-    id   = "terraclim_normals",
-    pull = .pull_terraclim_normals,
-    tidy = .tidy_terraclim_normals
+#' TerraClimate Counterfactual Data Source
+ds_terraclim_counterfactual <- climateR.catalogs::data_source$new(
+    id   = "terraclim_counterfactual",
+    pull = .pull_terraclim_counterfactual,
+    tidy = .tidy_terraclim_counterfactual
 )

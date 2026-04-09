@@ -1,40 +1,14 @@
-.pull_cabcm <- function(...) {
-  .tbl = arrow::as_arrow_table(dplyr::bind_rows(
-    climateR::read_dap_file(
-      "https://cida.usgs.gov/thredds/dodsC/CA-BCM-2014/historical",
-      id = "cabcm"
-    ),
-    climateR::read_dap_file(
-      "https://cida.usgs.gov/thredds/dodsC/CA-BCM-2014/future",
-      id = "cabcm"
-    )
-  ))
+# DEFERRED: CA-BCM-2014 STAC collection has no cube:variables and no zarr store.
+# Only netcdf files on S3 (s3://mdmf/gdp/netcdf/CA-BCM-2014/).
+# The old cida.usgs.gov THREDDS endpoint is retired.
+# To re-enable, either:
+#   1. Add cube:variables to the STAC metadata upstream, or
+#   2. Parse netcdf files directly from S3
 
-  return(.tbl)
-}
-
-.tidy_cabcm <- function(.tbl, ...) {
-  dplyr::as_tibble(.tbl) |>
-    dplyr::mutate(varname = gsub("HST_", "HST_HST_", varname),
-                  varname = gsub("GISS_AOM", "GISS-AOM", varname)) |>
-    tidyr::separate_wider_delim(
-      cols        = "varname",
-      names       = c("model", "scenario", "BAD", "variable"),
-      delim       = "_",
-      too_many = "merge",
-      cols_remove = FALSE
-    ) |>
-    dplyr::mutate(tiled = "T", type = "opendap", BAD = NULL,
-                  varname = gsub("GISS-AOM", "GISS_AOM", varname),
-                  varname = gsub("HST_HST", "HST", varname),
-                  scenario = ifelse(scenario == "HST", 'historical', scenario),
-                  model = gsub("GISS-AOM", "GISS_AOM", model)) |>
-    arrow::as_arrow_table()
-
-}
-
-ds_cabcm <- climateR.catalogs::data_source$new(
-  id   = "cabcm",
-  pull = .pull_cabcm,
-  tidy = .tidy_cabcm
-)
+# .pull_cabcm <- function(...) { ... }
+# .tidy_cabcm <- function(.tbl, ...) { ... }
+# ds_cabcm <- climateR.catalogs::data_source$new(
+#     id   = "cabcm",
+#     pull = .pull_cabcm,
+#     tidy = .tidy_cabcm
+# )

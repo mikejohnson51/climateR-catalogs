@@ -1,16 +1,8 @@
 .pull_loca <- function(...) {
-    .tbl = arrow::as_arrow_table(dplyr::bind_rows(
-        climateR::read_dap_file(
-            "https://cida.usgs.gov/thredds/dodsC/loca_historical",
-            id = "loca"
-        ),
-        climateR::read_dap_file(
-            "https://cida.usgs.gov/thredds/dodsC/loca_future",
-            id = "loca"
-        )
+    arrow::as_arrow_table(climateR.catalogs::read_stac_children(
+        parent_url = "https://api.water.usgs.gov:443/gdp/pygeoapi/stac/stac-collection/loca",
+        id = "loca"
     ))
-
-    return(.tbl)
 }
 
 .tidy_loca <- function(.tbl, ...) {
@@ -21,7 +13,7 @@
             delim       = "_",
             cols_remove = FALSE
         ) |>
-        dplyr::mutate(tiled = "T", type = "opendap") |>
+        dplyr::mutate(tiled = "T", type = "zarr") |>
         arrow::as_arrow_table()
 }
 
