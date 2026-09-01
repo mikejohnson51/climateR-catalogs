@@ -27,7 +27,7 @@
   {
     "id": "MERRA2",
     "step": "pull",
-    "error": "Error in h(simpleError(msg, call)): error in evaluating the argument 'y' in selecting a method for function 'merge': NetCDF: Access failure\n"
+    "error": "Error in h(simpleError(msg, call)): error in evaluating the argument 'x' in selecting a method for function 'unique': cannot open the connection\n"
   },
   {
     "id": "modis",
